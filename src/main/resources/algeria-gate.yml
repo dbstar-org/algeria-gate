@@ -27,8 +27,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate.hbm2ddl.schema_filter_provider: cn.besttone.connect.card.server.boot.jpa.ExcludeThirdPartySchemaFilterProvider
   redis:
     timeout: 1000
     jedis:
