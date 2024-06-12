@@ -1,0 +1,48 @@
+# tomcat
+server:
+  shutdown: graceful
+
+logging:
+  pattern:
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(%X{requestId}){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%class.%method\(%file:%L\)){cyan} %clr(:){faint} %m%n%wEx'
+    request: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(%X{requestId}){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%replace(%logger){'^request\\.', ''}.%X{method}){cyan} %clr(:){faint} %m%n"
+    calling: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(%X{requestId}){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%X{deep} %22X{parent} %m %5X{duration}){yellow} %X{kind} %clr(:){faint} %clr(%replace(%logger){'^calling\\.', ''}:%X{method}){cyan}%n"
+    access: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(%X{requestId}){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%X{method} %m %X{status}){yellow} %X{duration} %X{clientIp} %clr(:){faint} %clr(%X{agent}){cyan}%n'
+  level:
+    root: "INFO"
+
+# spring
+spring:
+  application:
+    name: algeria-gate
+  mvc:
+    servlet:
+      load-on-startup: 1
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.hbm2ddl.schema_filter_provider: cn.besttone.connect.card.server.boot.jpa.ExcludeThirdPartySchemaFilterProvider
+  redis:
+    timeout: 1000
+    jedis:
+      pool:
+        min-idle: 4
+        time-between-eviction-runs: 30s
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+algeria-gate:
+  version: ${git.commit.id.describe}
+  api:
+    account:
+      uri: http://account-platform:8080
+      app-key: business-card-server
