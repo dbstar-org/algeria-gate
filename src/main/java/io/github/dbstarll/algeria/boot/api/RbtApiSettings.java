@@ -15,10 +15,33 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
 
     private String uri;
     private String context = RelativeUriResolver.DEFAULT_CONTEXT;
+    private String portalAccount;
+    private String portalPwd;
+
+    private final ToneSettings tone = new ToneSettings();
 
     @Override
     public void afterPropertiesSet() {
         notBlank(uri, "uri not set");
         notBlank(context, "context not set");
+        notBlank(portalAccount, "portalAccount not set");
+        notBlank(portalPwd, "portalPwd not set");
+
+        tone.afterPropertiesSet();
+    }
+
+    @Getter
+    @Setter
+    public static final class ToneSettings extends BaseModel implements InitializingBean {
+        private static final long serialVersionUID = 5492040638431511670L;
+
+        private String portalType;
+        private String catalogId;
+
+        @Override
+        public void afterPropertiesSet() {
+            notBlank(portalType, "tone.portalType not set");
+            notBlank(catalogId, "tone.catalogId not set");
+        }
     }
 }

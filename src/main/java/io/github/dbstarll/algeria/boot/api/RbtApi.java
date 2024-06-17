@@ -13,8 +13,11 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import java.io.IOException;
 
 public final class RbtApi extends JsonApiClient {
+    private final RbtApiSettings settings;
+
     public RbtApi(final HttpClient httpClient, ObjectMapper mapper, final RbtApiSettings settings) {
         super(httpClient, true, optimize(mapper));
+        this.settings = settings;
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
     }
 
@@ -24,8 +27,14 @@ public final class RbtApi extends JsonApiClient {
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
-    public JsonNode queryCatalogTone() throws IOException, ApiException {
+    public JsonNode queryCatalogTone(final String status) throws IOException, ApiException {
         final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
+        request.setPortalAccount(settings.getPortalAccount());
+        request.setPortalPwd(settings.getPortalPwd());
+        request.setPortalType(settings.getTone().getPortalType());
+        request.setCatalogId(settings.getTone().getCatalogId());
+        request.setResourceType("1");
+        request.setStatus(status);
         return execute(post("/toneprovide/querycatalogtone")
                 .setEntity(jsonEntity(request)).build(), JsonNode.class);
     }

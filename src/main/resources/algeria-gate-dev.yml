@@ -1,9 +1,3 @@
-logging:
-  level:
-    "io.github.dbstarll.algeria.boot": "TRACE"
-    org.springframework.boot.context.config.ConfigDataLoaders: "TRACE"
-    _org.springframework.web.servlet.HandlerMapping.Mappings: "DEBUG"
-
 spring:
   config:
     encrypt-key: dev

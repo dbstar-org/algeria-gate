@@ -10,6 +10,9 @@ logging:
     access: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(%X{requestId}){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%X{method} %m %X{status}){yellow} %X{duration} %X{clientIp} %clr(:){faint} %clr(%X{agent}){cyan}%n'
   level:
     root: "INFO"
+    "io.github.dbstarll.algeria": "TRACE"
+    org.springframework.boot.context.config.ConfigDataLoaders: "TRACE"
+    _org.springframework.web.servlet.HandlerMapping.Mappings: "DEBUG"
 
 # spring
 spring:
@@ -44,3 +47,6 @@ algeria-gate:
     rbt:
       uri: http://localhost:8080/apiaccess/gw/rest
       context: /apiaccess/gw/rest
+      tone:
+        portal-type: 72
+        catalog-id: 400959

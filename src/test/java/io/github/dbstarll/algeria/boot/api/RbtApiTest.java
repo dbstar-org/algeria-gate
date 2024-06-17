@@ -18,7 +18,14 @@ class RbtApiTest {
 
     @Test
     void queryCatalogTone() throws IOException, ApiException {
-        final JsonNode body = rbtApi.queryCatalogTone();
+        final JsonNode body = rbtApi.queryCatalogTone("1");
+        assertNotNull(body);
+        System.out.println(body);
+    }
+
+    @Test
+    void queryCatalogToneFailed() throws IOException, ApiException {
+        final JsonNode body = rbtApi.queryCatalogTone("5");
         assertNotNull(body);
         System.out.println(body);
     }
