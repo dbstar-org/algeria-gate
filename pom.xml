@@ -27,6 +27,7 @@
     <!-- module version -->
     <version.slf4j>1.7.36</version.slf4j>
     <version.utils-spring-boot>1.0.7</version.utils-spring-boot>
+    <version.utils-json-api>1.1.9</version.utils-json-api>
     <version.lombok>1.18.30</version.lombok>
     <version.spring-boot>2.7.18</version.spring-boot>
     <version.mysql-connector>8.4.0</version.mysql-connector>
@@ -39,6 +40,11 @@
       <groupId>io.github.dbstarll.utils</groupId>
       <artifactId>utils-spring-boot</artifactId>
       <version>${version.utils-spring-boot}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.dbstarll.utils</groupId>
+      <artifactId>utils-json-api</artifactId>
+      <version>${version.utils-json-api}</version>
     </dependency>
     <!-- lombok -->
     <dependency>

@@ -1,0 +1,5 @@
+algeria-gate:
+  api:
+    rbt:
+      uri: http://localhost:8080/rbt
+      context: /rbt

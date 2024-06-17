@@ -41,6 +41,6 @@ spring:
 algeria-gate:
   version: ${git.commit.id.describe}
   api:
-    account:
-      uri: http://account-platform:8080
-      app-key: business-card-server
+    rbt:
+      uri: http://localhost:8080/rbt
+      context: /rbt
