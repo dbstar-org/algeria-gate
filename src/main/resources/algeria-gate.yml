@@ -42,5 +42,5 @@ algeria-gate:
   version: ${git.commit.id.describe}
   api:
     rbt:
-      uri: http://localhost:8080/rbt
-      context: /rbt
+      uri: http://localhost:8080/apiaccess/gw/rest
+      context: /apiaccess/gw/rest

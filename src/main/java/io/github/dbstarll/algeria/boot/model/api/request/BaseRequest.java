@@ -22,7 +22,6 @@ public abstract class BaseRequest extends BaseModel {
     @Schema(description = "外部用户访问USDP的密码")
     private String portalPwd;
 
-    @NotBlank
     @Schema(description = "门户类型")
     private String portalType = DEFAULT_PORTAL_TYPE;
 }
