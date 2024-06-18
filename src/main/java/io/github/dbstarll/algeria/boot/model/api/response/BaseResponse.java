@@ -10,6 +10,8 @@ import lombok.Setter;
 public abstract class BaseResponse extends BaseModel {
     private static final long serialVersionUID = 8730985039155524776L;
 
+    public static final String RETURN_CODE_SUCCESS ="000000";
+
     @Schema(description = "返回码")
     private String returnCode;
 }

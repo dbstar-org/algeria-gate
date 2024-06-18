@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.dbstarll.utils.net.api.ApiException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class RbtApiTest {
     @Autowired
     private RbtApi rbtApi;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void queryCatalogTone() throws IOException, ApiException {
-        final JsonNode body = rbtApi.queryCatalogTone("1");
+        final JsonNode body = objectMapper.valueToTree(rbtApi.queryCatalogTone("1"));
         assertNotNull(body);
         System.out.println(body);
     }
 
     @Test
     void queryCatalogToneFailed() throws IOException, ApiException {
-        final JsonNode body = rbtApi.queryCatalogTone("5");
+        final JsonNode body = objectMapper.valueToTree(rbtApi.queryCatalogTone("5"));
         assertNotNull(body);
         System.out.println(body);
     }

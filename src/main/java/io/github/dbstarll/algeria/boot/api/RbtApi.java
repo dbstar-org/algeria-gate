@@ -1,10 +1,10 @@
 package io.github.dbstarll.algeria.boot.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.github.dbstarll.algeria.boot.model.api.request.QueryCatalogToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.response.QueryCatalogToneResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -27,7 +27,7 @@ public final class RbtApi extends JsonApiClient {
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
-    public JsonNode queryCatalogTone(final String status) throws IOException, ApiException {
+    public QueryCatalogToneResponse queryCatalogTone(final String status) throws IOException, ApiException {
         final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
         request.setPortalAccount(settings.getPortalAccount());
         request.setPortalPwd(settings.getPortalPwd());
@@ -35,7 +35,7 @@ public final class RbtApi extends JsonApiClient {
         request.setCatalogId(settings.getTone().getCatalogId());
         request.setResourceType("1");
         request.setStatus(status);
-        return execute(post("/toneprovide/querycatalogtone")
-                .setEntity(jsonEntity(request)).build(), JsonNode.class);
+        return execute(post("/toneprovide/querycatalogtone").setEntity(jsonEntity(request)).build(),
+                QueryCatalogToneResponse.class);
     }
 }

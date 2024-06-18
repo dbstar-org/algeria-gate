@@ -10,5 +10,5 @@ public abstract class BaseQueryResponse extends BaseResponse {
     private static final long serialVersionUID = -5423110934092726669L;
 
     @Schema(description = "返回结果集的数量")
-    private int recordSum;
+    private String recordSum;
 }

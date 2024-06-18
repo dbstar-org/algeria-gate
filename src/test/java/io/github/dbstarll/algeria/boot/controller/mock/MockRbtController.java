@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot.controller.mock;
 
 import io.github.dbstarll.algeria.boot.model.api.request.QueryCatalogToneRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/rbt")
+@Slf4j
 class MockRbtController {
     private static final String RES_QUERY_CATALOG_TONE_SUCCESS = "{\n" +
             "\t\"returnCode\": \"000000\",\n" +
@@ -455,6 +457,7 @@ class MockRbtController {
 
     @PostMapping("/toneprovide/querycatalogtone")
     String queryCatalogTone(@Valid @RequestBody QueryCatalogToneRequest request) {
+        log.debug("queryCatalogTone: {}", request);
         if ("5".equals(request.getStatus())) {
             return RES_QUERY_CATALOG_TONE_FAILED;
         } else {
