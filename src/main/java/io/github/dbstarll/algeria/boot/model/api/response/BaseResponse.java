@@ -14,4 +14,8 @@ public abstract class BaseResponse extends BaseModel {
 
     @Schema(description = "返回码")
     private String returnCode;
+
+    public boolean success() {
+        return RETURN_CODE_SUCCESS.equals(returnCode);
+    }
 }
