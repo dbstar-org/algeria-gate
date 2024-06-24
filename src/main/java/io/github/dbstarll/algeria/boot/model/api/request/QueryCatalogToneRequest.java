@@ -15,7 +15,7 @@ public final class QueryCatalogToneRequest extends BaseQueryRequest {
 
     @NotBlank
     @Schema(description = "分类ID")
-    private String catalogId;
+    private String catalogID;
 
     @Schema(description = "排序模式 - 1：升序;2：降序")
     private String orderType = DEFAULT_ORDER_TYPE;

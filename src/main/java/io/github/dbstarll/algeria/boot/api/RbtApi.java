@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dbstarll.algeria.boot.model.api.request.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.QueryCatalogToneRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.QueryCatalogToneResponse;
@@ -22,11 +23,17 @@ import java.util.Optional;
 
 public final class RbtApi extends JsonApiClient {
     private final RbtApiSettings settings;
+    private final ToneProvide toneProvide;
 
     public RbtApi(final HttpClient httpClient, ObjectMapper mapper, final RbtApiSettings settings) {
         super(httpClient, true, optimize(mapper));
         this.settings = settings;
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
+        this.toneProvide = new ToneProvide();
+    }
+
+    public ToneProvide tone() {
+        return toneProvide;
     }
 
     private static ObjectMapper optimize(final ObjectMapper mapper) {
@@ -49,16 +56,27 @@ public final class RbtApi extends JsonApiClient {
         return finalResult;
     }
 
-    public QueryCatalogToneResponse queryCatalogTone(final String status) throws IOException, ApiException {
-        final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
-        request.setPortalAccount(settings.getPortalAccount());
-        request.setPortalPwd(settings.getPortalPwd());
-        request.setPortalType(settings.getTone().getPortalType());
-        request.setCatalogId(settings.getTone().getCatalogId());
-        request.setResourceType("1");
-        request.setStatus(status);
-        return execute(post("/toneprovide/querycatalogtone").setEntity(jsonEntity(request)).build(),
-                QueryCatalogToneResponse.class);
+    public class ToneProvide {
+        public QueryCatalogToneResponse query(final String status) throws IOException, ApiException {
+            final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setPortalType(settings.getTone().getPortalType());
+            request.setCatalogID(settings.getTone().getCatalogId());
+            request.setResourceType("1");
+            request.setStatus(status);
+            return execute(post("/toneprovide/querycatalogtone").setEntity(jsonEntity(request)).build(),
+                    QueryCatalogToneResponse.class);
+        }
+
+        public byte[] get(final String resourceId) throws IOException, ApiException {
+            final GetFileRequest request = new GetFileRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setPortalType(settings.getTone().getPortalType());
+            request.setResourceID(resourceId);
+            return execute(post("/toneprovide/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
+        }
     }
 
     @Getter

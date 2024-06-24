@@ -26,6 +26,7 @@
     <project.mainClass>io.github.dbstarll.algeria.boot.Starter</project.mainClass>
     <!-- module version -->
     <version.slf4j>1.7.36</version.slf4j>
+    <version.utils-lang>1.0.9</version.utils-lang>
     <version.utils-spring-boot>1.0.7</version.utils-spring-boot>
     <version.utils-json-api>1.1.9</version.utils-json-api>
     <version.lombok>1.18.30</version.lombok>
@@ -36,6 +37,11 @@
 
   <dependencies>
     <!-- commons utils -->
+    <dependency>
+      <groupId>io.github.dbstarll.utils</groupId>
+      <artifactId>utils-lang</artifactId>
+      <version>${version.utils-lang}</version>
+    </dependency>
     <dependency>
       <groupId>io.github.dbstarll.utils</groupId>
       <artifactId>utils-spring-boot</artifactId>

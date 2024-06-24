@@ -45,8 +45,8 @@ algeria-gate:
   version: ${git.commit.id.describe}
   api:
     rbt:
-      uri: http://localhost:8080/apiaccess/gw/rest
+      uri: https://116.63.194.38:17132/apiaccess/gw/rest
       context: /apiaccess/gw/rest
       tone:
-        portal-type: 72
-        catalog-id: 400959
+        portal-type: 71
+        catalog-id: 400960

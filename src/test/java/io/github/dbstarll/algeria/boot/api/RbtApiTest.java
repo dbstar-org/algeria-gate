@@ -22,27 +22,37 @@ class RbtApiTest {
 
     @Test
     void queryCatalogTone() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.queryCatalogTone("1"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.tone().query("1"));
         assertNotNull(body);
         assertEquals(5, body.size());
         assertEquals("000000", body.get("returnCode").textValue());
         assertEquals("-1", body.get("recordSum").textValue());
         assertEquals("0", body.get("operationID").textValue());
         assertEquals("0", body.get("resultCode").textValue());
-        assertEquals(3, body.get("toneInfos").size());
+        assertEquals(1, body.get("toneInfos").size());
         assertEquals(30, body.at("/toneInfos/0").size());
-        assertEquals("13239642", body.at("/toneInfos/0/toneID").textValue());
-        assertEquals(30, body.at("/toneInfos/1").size());
-        assertEquals("13239639", body.at("/toneInfos/1/toneID").textValue());
-        assertEquals(30, body.at("/toneInfos/2").size());
-        assertEquals("13239641", body.at("/toneInfos/2/toneID").textValue());
+        assertEquals("13229395", body.at("/toneInfos/0/toneID").textValue());
     }
 
     @Test
     void queryCatalogToneFailed() {
-        final RbtApiException e = assertThrowsExactly(RbtApiException.class, () -> rbtApi.queryCatalogTone("5"));
+        final RbtApiException e = assertThrowsExactly(RbtApiException.class, () -> rbtApi.tone().query("5"));
         assertEquals("RBT call failed[200002]", e.getMessage());
         assertEquals("200002", e.getReturnCode());
         assertNull(e.getCause());
+    }
+
+    @Test
+    void getFile() throws IOException, ApiException {
+        final byte[] data = rbtApi.tone().get("13229395");
+        assertNotNull(data);
+        assertEquals(7737, data.length);
+    }
+
+    @Test
+    void getFileNotExist() throws IOException, ApiException {
+        final byte[] data = rbtApi.tone().get("13229000");
+        assertNotNull(data);
+        assertEquals(115, data.length);
     }
 }
