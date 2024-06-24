@@ -10,11 +10,3 @@ spring:
   redis:
     timeout: 2000
     port: 26379
-
-algeria-gate:
-  api:
-    rbt:
-      uri: http://localhost:8080/rbt
-      context: /rbt
-      portal-account: myAccount
-      portal-pwd: myPassword

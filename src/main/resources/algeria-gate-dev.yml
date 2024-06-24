@@ -5,9 +5,3 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-
-algeria-gate:
-  api:
-    account:
-      uri: http://account.test.d02.bst:10080
-      secret: "{bC0NWjuMVSFiLR4d}TPmxKkEsiVWtQwyRQezC2JFXqXnsXZ70VT6SrXhBslelsR+p4MDELRvI4+GcQS0n"

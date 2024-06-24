@@ -47,6 +47,8 @@ algeria-gate:
     rbt:
       uri: https://116.63.194.38:17132/apiaccess/gw/rest
       context: /apiaccess/gw/rest
+      portal-account: admin
+      portal-pwd: IVAS@Huawei_1234
       tone:
         portal-type: 71
         catalog-id: 400960
