@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.dbstarll.algeria.boot.model.api.request.GetFileRequest;
-import io.github.dbstarll.algeria.boot.model.api.request.QueryCatalogToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.QueryCatalogToneResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
@@ -57,6 +57,8 @@ public final class RbtApi extends JsonApiClient {
     }
 
     public class ToneProvide {
+        private static final String PATH = "/toneprovide";
+
         public QueryCatalogToneResponse query(final String status) throws IOException, ApiException {
             final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
             request.setPortalAccount(settings.getPortalAccount());
@@ -65,7 +67,7 @@ public final class RbtApi extends JsonApiClient {
             request.setCatalogID(settings.getTone().getCatalogId());
             request.setResourceType("1");
             request.setStatus(status);
-            return execute(post("/toneprovide/querycatalogtone").setEntity(jsonEntity(request)).build(),
+            return execute(post(PATH + "/querycatalogtone").setEntity(jsonEntity(request)).build(),
                     QueryCatalogToneResponse.class);
         }
 
@@ -75,7 +77,15 @@ public final class RbtApi extends JsonApiClient {
             request.setPortalPwd(settings.getPortalPwd());
             request.setPortalType(settings.getTone().getPortalType());
             request.setResourceID(resourceId);
-            return execute(post("/toneprovide/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
+            return execute(post(PATH + "/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
+        }
+    }
+
+    public class UserManage {
+        private static final String PATH = "/usermanage";
+
+        public JsonNode query() {
+            return null;
         }
     }
 

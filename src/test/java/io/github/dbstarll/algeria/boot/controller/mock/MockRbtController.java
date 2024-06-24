@@ -1,6 +1,6 @@
 package io.github.dbstarll.algeria.boot.controller.mock;
 
-import io.github.dbstarll.algeria.boot.model.api.request.QueryCatalogToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

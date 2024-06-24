@@ -1,5 +1,6 @@
-package io.github.dbstarll.algeria.boot.model.api.request;
+package io.github.dbstarll.algeria.boot.model.api.request.tone;
 
+import io.github.dbstarll.algeria.boot.model.api.request.BaseQueryRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
