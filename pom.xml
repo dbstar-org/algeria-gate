@@ -30,6 +30,7 @@
     <version.utils-spring-boot>1.0.7</version.utils-spring-boot>
     <version.utils-json-api>1.1.9</version.utils-json-api>
     <version.lombok>1.18.30</version.lombok>
+    <version.uuid-creator>5.3.7</version.uuid-creator>
     <version.spring-boot>2.7.18</version.spring-boot>
     <version.mysql-connector>8.4.0</version.mysql-connector>
     <version.knife4j-openapi3-spring-boot>4.5.0</version.knife4j-openapi3-spring-boot>
@@ -51,6 +52,12 @@
       <groupId>io.github.dbstarll.utils</groupId>
       <artifactId>utils-json-api</artifactId>
       <version>${version.utils-json-api}</version>
+    </dependency>
+    <!-- uuid -->
+    <dependency>
+      <groupId>com.github.f4b6a3</groupId>
+      <artifactId>uuid-creator</artifactId>
+      <version>${version.uuid-creator}</version>
     </dependency>
     <!-- lombok -->
     <dependency>
