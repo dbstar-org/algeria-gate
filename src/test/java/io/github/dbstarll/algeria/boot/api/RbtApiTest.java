@@ -58,7 +58,7 @@ class RbtApiTest {
 
     @Test
     void queryUser() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.user().query("18210008434"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUser("18210008434"));
         assertNotNull(body);
         assertEquals(5, body.size());
         assertEquals("000000", body.get("returnCode").textValue());

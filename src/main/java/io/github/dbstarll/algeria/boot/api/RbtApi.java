@@ -96,7 +96,7 @@ public final class RbtApi extends JsonApiClient {
     public class UserManage {
         private final String moduleRoot;
 
-        public QueryUserResponse query(final String phone) throws IOException, ApiException {
+        public QueryUserResponse queryUser(final String phone) throws IOException, ApiException {
             final QueryUserRequest request = new QueryUserRequest();
             request.setPortalAccount(settings.getPortalAccount());
             request.setPortalPwd(settings.getPortalPwd());
