@@ -1,6 +1,6 @@
 package io.github.dbstarll.algeria.boot.service;
 
-import io.github.dbstarll.algeria.boot.model.api.response.ToneInfo;
+import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
 import io.github.dbstarll.utils.net.api.ApiException;
 
 import java.io.IOException;

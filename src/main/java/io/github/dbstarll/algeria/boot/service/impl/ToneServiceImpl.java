@@ -1,7 +1,7 @@
 package io.github.dbstarll.algeria.boot.service.impl;
 
 import io.github.dbstarll.algeria.boot.api.RbtApi;
-import io.github.dbstarll.algeria.boot.model.api.response.ToneInfo;
+import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
 import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.utils.net.api.ApiException;
 import lombok.RequiredArgsConstructor;

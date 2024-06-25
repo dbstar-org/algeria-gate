@@ -55,4 +55,21 @@ class RbtApiTest {
         assertNotNull(data);
         assertEquals(115, data.length);
     }
+
+    @Test
+    void queryUser() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().query("18210008434"));
+        assertNotNull(body);
+        assertEquals(5, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("-1", body.get("recordSum").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
+        assertEquals(1, body.get("userInfos").size());
+        assertEquals(29, body.at("/userInfos/0").size());
+        assertEquals("18210008434", body.at("/userInfos/0/phoneNumber").textValue());
+        assertEquals(1, body.at("/userInfos/0/serviceOrders").size());
+        assertEquals(18, body.at("/userInfos/0/serviceOrders/0").size());
+        assertEquals("44070863", body.at("/userInfos/0/serviceOrders/0/orderID").textValue());
+    }
 }

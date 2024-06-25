@@ -1,6 +1,6 @@
 package io.github.dbstarll.algeria.boot.controller;
 
-import io.github.dbstarll.algeria.boot.model.api.response.ToneInfo;
+import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
 import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;

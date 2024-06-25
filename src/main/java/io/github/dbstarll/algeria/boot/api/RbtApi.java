@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.QueryCatalogToneResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -24,16 +26,22 @@ import java.util.Optional;
 public final class RbtApi extends JsonApiClient {
     private final RbtApiSettings settings;
     private final ToneProvide toneProvide;
+    private final UserManage userManage;
 
     public RbtApi(final HttpClient httpClient, ObjectMapper mapper, final RbtApiSettings settings) {
         super(httpClient, true, optimize(mapper));
         this.settings = settings;
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
         this.toneProvide = new ToneProvide();
+        this.userManage = new UserManage();
     }
 
     public ToneProvide tone() {
         return toneProvide;
+    }
+
+    public UserManage user() {
+        return userManage;
     }
 
     private static ObjectMapper optimize(final ObjectMapper mapper) {
@@ -84,8 +92,14 @@ public final class RbtApi extends JsonApiClient {
     public class UserManage {
         private static final String PATH = "/usermanage";
 
-        public JsonNode query() {
-            return null;
+        public QueryUserResponse query(final String phone) throws IOException, ApiException {
+            final QueryUserRequest request = new QueryUserRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setPortalType(settings.getTone().getPortalType());
+            request.setPhoneNumber(phone);
+            return execute(post(PATH + "/queryuser").setEntity(jsonEntity(request)).build(),
+                    QueryUserResponse.class);
         }
     }
 
