@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,6 +55,7 @@ class RbtApiTest {
     void getFileNotExist() throws IOException, ApiException {
         final byte[] data = rbtApi.tone().get("13229000");
         assertNotNull(data);
+        System.out.println(new String(data, StandardCharsets.UTF_8));
         assertEquals(115, data.length);
     }
 
@@ -87,5 +89,30 @@ class RbtApiTest {
         assertEquals(52, body.at("/toneInfos/0").size());
         assertEquals("13219578", body.at("/toneInfos/0/toneID").textValue());
         assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());
+    }
+
+    @Test
+    void queryUserProduct() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUserProduct("18176402111"));
+        assertNotNull(body);
+        assertEquals(5, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("-1", body.get("recordSum").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
+        assertEquals(1, body.get("toneInfos").size());
+        assertEquals(52, body.at("/toneInfos/0").size());
+        assertEquals("13219578", body.at("/toneInfos/0/toneID").textValue());
+        assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());
+    }
+
+    @Test
+    void sendSm() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.system().sendSm("18918606202", "478722"));
+        assertNotNull(body);
+        assertEquals(3, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
     }
 }

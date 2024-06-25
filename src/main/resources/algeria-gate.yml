@@ -49,6 +49,8 @@ algeria-gate:
       context: /apiaccess/gw/rest
       portal-account: admin
       portal-pwd: IVAS@Huawei_1234
+      role: 1
+      role-code: 18281767020
       tone:
         portal-type: 71
         catalog-id: 400960

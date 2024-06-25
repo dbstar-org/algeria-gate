@@ -5,13 +5,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dbstarll.algeria.boot.model.api.request.system.SendSmRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryInboxToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserProductRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.system.SendSmResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryInboxToneResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserProductResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
@@ -31,6 +35,7 @@ public final class RbtApi extends JsonApiClient {
     private final RbtApiSettings settings;
     private final ToneProvide toneProvide;
     private final UserManage userManage;
+    private final System system;
 
     public RbtApi(final HttpClient httpClient, ObjectMapper mapper, final RbtApiSettings settings) {
         super(httpClient, true, optimize(mapper));
@@ -38,6 +43,7 @@ public final class RbtApi extends JsonApiClient {
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
         this.toneProvide = new ToneProvide("/toneprovide");
         this.userManage = new UserManage("/usermanage");
+        this.system = new System("/system");
     }
 
     public ToneProvide tone() {
@@ -46,6 +52,10 @@ public final class RbtApi extends JsonApiClient {
 
     public UserManage user() {
         return userManage;
+    }
+
+    public System system() {
+        return system;
     }
 
     private static ObjectMapper optimize(final ObjectMapper mapper) {
@@ -113,6 +123,16 @@ public final class RbtApi extends JsonApiClient {
             return execute(post(moduleRoot + "/queryuser").setEntity(jsonEntity(request)).build(),
                     QueryUserResponse.class);
         }
+
+        public QueryUserProductResponse queryUserProduct(final String phone) throws IOException, ApiException {
+            final QueryUserProductRequest request = new QueryUserProductRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setPortalType(settings.getTone().getPortalType());
+            request.setPhoneNumber(phone);
+            return execute(post(moduleRoot + "/queryuserproduct").setEntity(jsonEntity(request)).build(),
+                    QueryUserProductResponse.class);
+        }
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -128,6 +148,23 @@ public final class RbtApi extends JsonApiClient {
             request.setResourceType("1");
             return execute(post(moduleRoot + "/queryinboxtone").setEntity(jsonEntity(request)).build(),
                     QueryInboxToneResponse.class);
+        }
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public class System {
+        private final String moduleRoot;
+
+        public SendSmResponse sendSm(final String phone, final String code) throws IOException, ApiException {
+            final SendSmRequest request = new SendSmRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setRole(settings.getRole());
+            request.setRoleCode(settings.getRoleCode());
+            request.setPhoneNumbers(new String[]{phone});
+            request.setPlaceHolderParams(new String[]{code});
+            return execute(post(moduleRoot + "/sendsm").setEntity(jsonEntity(request)).build(),
+                    SendSmResponse.class);
         }
     }
 

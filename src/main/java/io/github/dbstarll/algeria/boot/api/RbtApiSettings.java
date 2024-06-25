@@ -2,9 +2,12 @@ package io.github.dbstarll.algeria.boot.api;
 
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
+
+import javax.validation.constraints.NotBlank;
 
 import static org.apache.commons.lang3.Validate.notBlank;
 
@@ -17,6 +20,8 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
     private String context = RelativeUriResolver.DEFAULT_CONTEXT;
     private String portalAccount;
     private String portalPwd;
+    private String role;
+    private String roleCode;
 
     private final ToneSettings tone = new ToneSettings();
 
@@ -26,6 +31,8 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
         notBlank(context, "context not set");
         notBlank(portalAccount, "portalAccount not set");
         notBlank(portalPwd, "portalPwd not set");
+        notBlank(role, "role not set");
+        notBlank(roleCode, "roleCode not set");
 
         tone.afterPropertiesSet();
     }

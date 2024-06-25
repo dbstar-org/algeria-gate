@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public final class QueryUserRequest extends BaseQueryRequest {
-    private static final long serialVersionUID = -4041465202829007907L;
+public final class QueryUserProductRequest extends BaseQueryRequest {
+    private static final long serialVersionUID = -5322510938139363317L;
 
     @NotBlank
     @Schema(description = "用户的电话号码")
@@ -18,4 +18,7 @@ public final class QueryUserRequest extends BaseQueryRequest {
 
     @Schema(description = "用户状态")
     private String status;
+
+    @Schema(description = "product code")
+    private String productID;
 }
