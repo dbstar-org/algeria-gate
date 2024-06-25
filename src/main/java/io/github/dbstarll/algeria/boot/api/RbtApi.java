@@ -1,10 +1,12 @@
 package io.github.dbstarll.algeria.boot.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dbstarll.algeria.boot.model.api.request.BaseRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.system.SendSmRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
@@ -26,10 +28,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
 import org.springframework.data.util.Predicates;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class RbtApi extends JsonApiClient {
     private final RbtApiSettings settings;
@@ -78,29 +82,31 @@ public final class RbtApi extends JsonApiClient {
         return finalResult;
     }
 
+    private <T extends BaseRequest> HttpEntity auth(final T request, final Consumer<T> consumer)
+            throws JsonProcessingException {
+        request.setPortalAccount(settings.getPortalAccount());
+        request.setPortalPwd(settings.getPortalPwd());
+        request.setPortalType(settings.getTone().getPortalType());
+        consumer.accept(request);
+        return jsonEntity(request);
+    }
+
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public class ToneProvide {
         private final String moduleRoot;
 
         public QueryCatalogToneResponse query(final String status) throws IOException, ApiException {
-            final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setPortalType(settings.getTone().getPortalType());
-            request.setCatalogID(settings.getTone().getCatalogId());
-            request.setResourceType("1");
-            request.setStatus(status);
-            return execute(post(moduleRoot + "/querycatalogtone").setEntity(jsonEntity(request)).build(),
-                    QueryCatalogToneResponse.class);
+            return execute(post(moduleRoot + "/querycatalogtone")
+                    .setEntity(auth(new QueryCatalogToneRequest(), request -> {
+                        request.setCatalogID(settings.getTone().getCatalogId());
+                        request.setResourceType("1");
+                        request.setStatus(status);
+                    })).build(), QueryCatalogToneResponse.class);
         }
 
         public byte[] get(final String resourceId) throws IOException, ApiException {
-            final GetFileRequest request = new GetFileRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setPortalType(settings.getTone().getPortalType());
-            request.setResourceID(resourceId);
-            return execute(post(moduleRoot + "/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
+            return execute(post(moduleRoot + "/getfile").setEntity(auth(new GetFileRequest(),
+                    request -> request.setResourceID(resourceId))).build(), byte[].class);
         }
     }
 
@@ -115,23 +121,14 @@ public final class RbtApi extends JsonApiClient {
         }
 
         public QueryUserResponse queryUser(final String phone) throws IOException, ApiException {
-            final QueryUserRequest request = new QueryUserRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setPortalType(settings.getTone().getPortalType());
-            request.setPhoneNumber(phone);
-            return execute(post(moduleRoot + "/queryuser").setEntity(jsonEntity(request)).build(),
-                    QueryUserResponse.class);
+            return execute(post(moduleRoot + "/queryuser").setEntity(auth(new QueryUserRequest(),
+                    request -> request.setPhoneNumber(phone))).build(), QueryUserResponse.class);
         }
 
         public QueryUserProductResponse queryUserProduct(final String phone) throws IOException, ApiException {
-            final QueryUserProductRequest request = new QueryUserProductRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setPortalType(settings.getTone().getPortalType());
-            request.setPhoneNumber(phone);
-            return execute(post(moduleRoot + "/queryuserproduct").setEntity(jsonEntity(request)).build(),
-                    QueryUserProductResponse.class);
+            return execute(post(moduleRoot + "/queryuserproduct")
+                    .setEntity(auth(new QueryUserProductRequest(),
+                            request -> request.setPhoneNumber(phone))).build(), QueryUserProductResponse.class);
         }
     }
 
@@ -140,14 +137,11 @@ public final class RbtApi extends JsonApiClient {
         private final String moduleRoot;
 
         public QueryInboxToneResponse queryInboxTone(final String phone) throws IOException, ApiException {
-            final QueryInboxToneRequest request = new QueryInboxToneRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setPortalType(settings.getTone().getPortalType());
-            request.setPhoneNumber(phone);
-            request.setResourceType("1");
-            return execute(post(moduleRoot + "/queryinboxtone").setEntity(jsonEntity(request)).build(),
-                    QueryInboxToneResponse.class);
+            return execute(post(moduleRoot + "/queryinboxtone").setEntity(auth(new QueryInboxToneRequest(),
+                    request -> {
+                        request.setPhoneNumber(phone);
+                        request.setResourceType("1");
+                    })).build(), QueryInboxToneResponse.class);
         }
     }
 
@@ -156,15 +150,12 @@ public final class RbtApi extends JsonApiClient {
         private final String moduleRoot;
 
         public SendSmResponse sendSm(final String phone, final String code) throws IOException, ApiException {
-            final SendSmRequest request = new SendSmRequest();
-            request.setPortalAccount(settings.getPortalAccount());
-            request.setPortalPwd(settings.getPortalPwd());
-            request.setRole(settings.getRole());
-            request.setRoleCode(settings.getRoleCode());
-            request.setPhoneNumbers(new String[]{phone});
-            request.setPlaceHolderParams(new String[]{code});
-            return execute(post(moduleRoot + "/sendsm").setEntity(jsonEntity(request)).build(),
-                    SendSmResponse.class);
+            return execute(post(moduleRoot + "/sendsm").setEntity(auth(new SendSmRequest(), request -> {
+                request.setRole(settings.getRole());
+                request.setRoleCode(settings.getRoleCode());
+                request.setPhoneNumbers(new String[]{phone});
+                request.setPlaceHolderParams(new String[]{code});
+            })).build(), SendSmResponse.class);
         }
     }
 
