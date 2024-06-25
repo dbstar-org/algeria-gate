@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public final class QueryCatalogToneResponse extends BaseQueryResponse {
@@ -16,6 +18,6 @@ public final class QueryCatalogToneResponse extends BaseQueryResponse {
     @Schema(description = "The resultCode")
     private String resultCode;
 
-    private ToneInfo[] toneInfos;
+    private List<ToneInfo> toneInfos;
 
 }

@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.user.QueryInboxToneRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.QueryInboxToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
@@ -96,6 +98,12 @@ public final class RbtApi extends JsonApiClient {
     public class UserManage {
         private final String moduleRoot;
 
+        private final UserToneManage userToneManage = new UserToneManage("usertonemanage");
+
+        public UserToneManage tone() {
+            return userToneManage;
+        }
+
         public QueryUserResponse queryUser(final String phone) throws IOException, ApiException {
             final QueryUserRequest request = new QueryUserRequest();
             request.setPortalAccount(settings.getPortalAccount());
@@ -104,6 +112,22 @@ public final class RbtApi extends JsonApiClient {
             request.setPhoneNumber(phone);
             return execute(post(moduleRoot + "/queryuser").setEntity(jsonEntity(request)).build(),
                     QueryUserResponse.class);
+        }
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public class UserToneManage {
+        private final String moduleRoot;
+
+        public QueryInboxToneResponse queryInboxTone(final String phone) throws IOException, ApiException {
+            final QueryInboxToneRequest request = new QueryInboxToneRequest();
+            request.setPortalAccount(settings.getPortalAccount());
+            request.setPortalPwd(settings.getPortalPwd());
+            request.setPortalType(settings.getTone().getPortalType());
+            request.setPhoneNumber(phone);
+            request.setResourceType("1");
+            return execute(post(moduleRoot + "/queryinboxtone").setEntity(jsonEntity(request)).build(),
+                    QueryInboxToneResponse.class);
         }
     }
 

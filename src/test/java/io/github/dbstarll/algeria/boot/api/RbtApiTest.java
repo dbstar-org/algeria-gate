@@ -30,8 +30,9 @@ class RbtApiTest {
         assertEquals("0", body.get("operationID").textValue());
         assertEquals("0", body.get("resultCode").textValue());
         assertEquals(1, body.get("toneInfos").size());
-        assertEquals(30, body.at("/toneInfos/0").size());
+        assertEquals(35, body.at("/toneInfos/0").size());
         assertEquals("13229395", body.at("/toneInfos/0/toneID").textValue());
+        assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());
     }
 
     @Test
@@ -71,5 +72,20 @@ class RbtApiTest {
         assertEquals(1, body.at("/userInfos/0/serviceOrders").size());
         assertEquals(18, body.at("/userInfos/0/serviceOrders/0").size());
         assertEquals("44070863", body.at("/userInfos/0/serviceOrders/0/orderID").textValue());
+    }
+
+    @Test
+    void queryInboxTone() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().tone().queryInboxTone("18210008434"));
+        assertNotNull(body);
+        assertEquals(5, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("-1", body.get("recordSum").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
+        assertEquals(1, body.get("toneInfos").size());
+        assertEquals(52, body.at("/toneInfos/0").size());
+        assertEquals("13219578", body.at("/toneInfos/0/toneID").textValue());
+        assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());
     }
 }

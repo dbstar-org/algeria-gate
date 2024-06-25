@@ -23,11 +23,11 @@ class ToneServiceImpl implements ToneService {
 
     @Override
     public int update() throws IOException, ApiException {
-        final ToneInfo[] toneInfos = rbtApi.tone().query("1").getToneInfos();
+        final List<ToneInfo> toneInfos = rbtApi.tone().query("1").getToneInfos();
         toneLock.writeLock().lock();
         try {
             tones.clear();
-            tones.addAll(Arrays.asList(toneInfos));
+            tones.addAll(toneInfos);
             return tones.size();
         } finally {
             toneLock.writeLock().unlock();
