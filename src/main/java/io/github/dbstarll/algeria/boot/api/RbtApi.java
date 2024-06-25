@@ -15,7 +15,9 @@ import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.github.dbstarll.utils.net.api.ApiProtocolException;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.springframework.data.util.Predicates;
@@ -32,8 +34,8 @@ public final class RbtApi extends JsonApiClient {
         super(httpClient, true, optimize(mapper));
         this.settings = settings;
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
-        this.toneProvide = new ToneProvide();
-        this.userManage = new UserManage();
+        this.toneProvide = new ToneProvide("/toneprovide");
+        this.userManage = new UserManage("/usermanage");
     }
 
     public ToneProvide tone() {
@@ -64,8 +66,9 @@ public final class RbtApi extends JsonApiClient {
         return finalResult;
     }
 
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public class ToneProvide {
-        private static final String PATH = "/toneprovide";
+        private final String moduleRoot;
 
         public QueryCatalogToneResponse query(final String status) throws IOException, ApiException {
             final QueryCatalogToneRequest request = new QueryCatalogToneRequest();
@@ -75,7 +78,7 @@ public final class RbtApi extends JsonApiClient {
             request.setCatalogID(settings.getTone().getCatalogId());
             request.setResourceType("1");
             request.setStatus(status);
-            return execute(post(PATH + "/querycatalogtone").setEntity(jsonEntity(request)).build(),
+            return execute(post(moduleRoot + "/querycatalogtone").setEntity(jsonEntity(request)).build(),
                     QueryCatalogToneResponse.class);
         }
 
@@ -85,12 +88,13 @@ public final class RbtApi extends JsonApiClient {
             request.setPortalPwd(settings.getPortalPwd());
             request.setPortalType(settings.getTone().getPortalType());
             request.setResourceID(resourceId);
-            return execute(post(PATH + "/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
+            return execute(post(moduleRoot + "/getfile").setEntity(jsonEntity(request)).build(), byte[].class);
         }
     }
 
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public class UserManage {
-        private static final String PATH = "/usermanage";
+        private final String moduleRoot;
 
         public QueryUserResponse query(final String phone) throws IOException, ApiException {
             final QueryUserRequest request = new QueryUserRequest();
@@ -98,7 +102,7 @@ public final class RbtApi extends JsonApiClient {
             request.setPortalPwd(settings.getPortalPwd());
             request.setPortalType(settings.getTone().getPortalType());
             request.setPhoneNumber(phone);
-            return execute(post(PATH + "/queryuser").setEntity(jsonEntity(request)).build(),
+            return execute(post(moduleRoot + "/queryuser").setEntity(jsonEntity(request)).build(),
                     QueryUserResponse.class);
         }
     }
