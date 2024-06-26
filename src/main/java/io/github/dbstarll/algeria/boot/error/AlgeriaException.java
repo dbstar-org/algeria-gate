@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 public abstract class AlgeriaException extends NestedRuntimeException {
     private static final long serialVersionUID = 1782643877654940576L;
 
-    private transient Map<String, Serializable> data;
+    private final Map<String, Serializable> data = new HashMap<>();
 
     protected AlgeriaException(String msg) {
         super(msg);
@@ -45,11 +45,10 @@ public abstract class AlgeriaException extends NestedRuntimeException {
      * @return 错误数据
      */
     public final Map<String, Serializable> data() {
-        return data;
+        return data.isEmpty() ? null : data;
     }
 
     protected final void setData(final Consumer<Map<String, Serializable>> consumer) {
-        this.data = new HashMap<>();
         consumer.accept(this.data);
     }
 }
