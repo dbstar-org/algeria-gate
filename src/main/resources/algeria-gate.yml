@@ -54,5 +54,7 @@ algeria-gate:
       role-code: admin
       tone:
         catalog-id: 400960
+      user:
+        product-id: 13
       system:
         sm-label: sm_send_game_verification_code

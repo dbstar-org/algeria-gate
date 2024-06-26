@@ -164,16 +164,16 @@ public final class RbtApi extends JsonApiClient {
         public SubscribeProductResponse subscribeProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/subscribeproduct")
                     .setEntity(authUpdate(new SubscribeProductRequest(), request -> {
+                        request.setProductID(settings.getUser().getProductId());
                         request.setPhoneNumbers(new String[]{phone});
-                        request.setProductID("13");
                     })).build(), SubscribeProductResponse.class);
         }
 
         public SubscribeProductResponse unsubscribeProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/unsubscribeproduct")
                     .setEntity(authUpdate(new UnsubscribeProductRequest(), request -> {
+                        request.setProductID(settings.getUser().getProductId());
                         request.setPhoneNumbers(new String[]{phone});
-                        request.setProductID("13");
                     })).build(), SubscribeProductResponse.class);
         }
     }

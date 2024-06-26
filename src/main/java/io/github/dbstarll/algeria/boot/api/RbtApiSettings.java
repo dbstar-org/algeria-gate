@@ -23,6 +23,7 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
 
     private final ToneSettings tone = new ToneSettings();
     private final SystemSettings system = new SystemSettings();
+    private final UserSettings user = new UserSettings();
 
     @Override
     public void afterPropertiesSet() {
@@ -36,6 +37,7 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
 
         tone.afterPropertiesSet();
         system.afterPropertiesSet();
+        user.afterPropertiesSet();
     }
 
     @Getter
@@ -61,6 +63,19 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
         @Override
         public void afterPropertiesSet() {
             notBlank(smLabel, "system.smLabel not set");
+        }
+    }
+
+    @Getter
+    @Setter
+    public static final class UserSettings extends BaseModel implements InitializingBean {
+        private static final long serialVersionUID = 8186591634904115152L;
+
+        private String productId;
+
+        @Override
+        public void afterPropertiesSet() {
+            notBlank(productId, "user.productId not set");
         }
     }
 }
