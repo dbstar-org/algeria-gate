@@ -3,7 +3,7 @@ package io.github.dbstarll.algeria.boot.controller;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.service.UserService;
-import io.github.dbstarll.algeria.boot.uuid.Uuid;
+import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.UUID;
 
 @Tag(name = "登录管理")
@@ -27,25 +28,21 @@ class LoginController {
 
     @Operation(summary = "发送验证码", description = "向指定的手机发送随机验证码")
     @PostMapping("/verify-code")
-    GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request) {
+    GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request) throws IOException, ApiException {
         userService.verifyCode(request.getPhone());
         return GeneralResponse.ok(true);
     }
 
     @Operation(summary = "手机+验证码登录", description = "手机+验证码登录.")
     @PostMapping("/phone")
-    UUID login(@Valid @RequestBody final LoginRequest request) {
-        return Uuid.generate();
+    GeneralResponse<UUID> loginPhone(@Valid @RequestBody final LoginRequest request) {
+        return GeneralResponse.ok(userService.login(request.getPhone(), request.getVerifyCode()));
     }
 
     @Getter
     @Setter
-    public static final class LoginRequest extends BaseModel {
+    public static final class LoginRequest extends PhoneRequest {
         private static final long serialVersionUID = -5973775058846533724L;
-
-        @NotBlank
-        @Schema(description = "手机号码")
-        private String phone;
 
         @NotBlank
         @Schema(description = "手机验证码")

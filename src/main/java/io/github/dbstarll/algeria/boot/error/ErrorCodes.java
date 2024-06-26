@@ -8,6 +8,7 @@ public final class ErrorCodes {
     public static final int SUCCESS = 0;
 
     public static final int VALIDATION_FAILED = 400000;
+    public static final int INVALID_VERIFY_CODE = 400001;
 
     public static final int UNKNOWN = 500000;
     public static final int UN_CAUGHT = 500001;

@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static io.github.dbstarll.algeria.boot.controller.LoginController.*;
 import static io.github.dbstarll.algeria.boot.controller.LoginController.PhoneRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,5 +39,28 @@ class LoginControllerTest {
         assertEquals("FrequentlyObtainVerifyCodeException", body2.get("type").textValue());
         assertEquals(1, body2.get("data").size());
         assertEquals("123456789", body2.at("/data/phone").textValue());
+    }
+
+    @Test
+    void loginPhone() {
+        final PhoneRequest request = new PhoneRequest("1234567890");
+        final ResponseEntity<JsonNode> res = restTemplate.postForEntity("/api/login/verify-code", request, JsonNode.class);
+        assertEquals(HttpStatus.OK, res.getStatusCode());
+        final JsonNode body = res.getBody();
+        assertNotNull(body);
+        assertEquals(2, body.size());
+        assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+        assertTrue(body.get("data").booleanValue());
+
+        final LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setPhone("1234567890");
+        loginRequest.setVerifyCode("000000");
+        final ResponseEntity<JsonNode> loginRes = restTemplate.postForEntity("/api/login/phone", loginRequest, JsonNode.class);
+        assertEquals(HttpStatus.OK, loginRes.getStatusCode());
+        final JsonNode loginBody = loginRes.getBody();
+        assertNotNull(loginBody);
+        assertEquals(2, loginBody.size());
+        assertEquals(ErrorCodes.SUCCESS, loginBody.get("code").intValue());
+        assertTrue(loginBody.get("data").isTextual());
     }
 }
