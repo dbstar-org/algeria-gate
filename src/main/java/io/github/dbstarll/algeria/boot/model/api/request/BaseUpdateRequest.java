@@ -11,11 +11,7 @@ import javax.validation.constraints.NotBlank;
 public abstract class BaseUpdateRequest extends BaseRequest {
     private static final long serialVersionUID = 686289125326993275L;
 
-    public static final String DEFAULT_MODULE_CODE = "000000";
     public static final String DEFAULT_ROLE = "1";
-
-    @Schema(description = "Module code")
-    private String moduleCode = DEFAULT_MODULE_CODE;
 
     @NotBlank
     @Schema(description = "操作员类型")

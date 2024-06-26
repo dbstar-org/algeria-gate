@@ -14,10 +14,7 @@ import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRe
 import io.github.dbstarll.algeria.boot.model.api.request.user.*;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.user.QueryInboxToneResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserProductResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProductResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.*;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -176,6 +173,15 @@ public final class RbtApi extends JsonApiClient {
                         request.setPhoneNumbers(new String[]{phone});
                     })).build(), SubscribeProductResponse.class);
         }
+
+        public EasyDownloadResponse easyDownload(final String phone, final String resourceID) throws IOException, ApiException {
+            return execute(post(moduleRoot + "/easydownload")
+                    .setEntity(authUpdate(new EasyDownloadRequest(), request -> {
+                        request.setPhoneNumber(phone);
+                        request.setResourceType("1");
+                        request.setResourceID(new String[]{resourceID});
+                    })).build(), EasyDownloadResponse.class);
+        }
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -188,6 +194,14 @@ public final class RbtApi extends JsonApiClient {
                         request.setPhoneNumber(phone);
                         request.setResourceType("1");
                     })).build(), QueryInboxToneResponse.class);
+        }
+
+        public BaseResponse delInboxTone(final String phone, final String resourceId) throws IOException, ApiException {
+            return execute(delete(moduleRoot + "/delInboxTone").setEntity(authUpdate(new DelInboxToneRequest(),
+                    request -> {
+                        request.setPhoneNumber(phone);
+                        request.setResourceID(resourceId);
+                    })).build(), BaseResponse.class);
         }
     }
 
