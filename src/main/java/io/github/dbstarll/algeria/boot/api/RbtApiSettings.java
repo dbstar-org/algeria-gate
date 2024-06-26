@@ -2,12 +2,9 @@ package io.github.dbstarll.algeria.boot.api;
 
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.validation.constraints.NotBlank;
 
 import static org.apache.commons.lang3.Validate.notBlank;
 
@@ -20,10 +17,12 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
     private String context = RelativeUriResolver.DEFAULT_CONTEXT;
     private String portalAccount;
     private String portalPwd;
+    private String portalType;
     private String role;
     private String roleCode;
 
     private final ToneSettings tone = new ToneSettings();
+    private final SystemSettings system = new SystemSettings();
 
     @Override
     public void afterPropertiesSet() {
@@ -31,10 +30,12 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
         notBlank(context, "context not set");
         notBlank(portalAccount, "portalAccount not set");
         notBlank(portalPwd, "portalPwd not set");
+        notBlank(portalType, "tone.portalType not set");
         notBlank(role, "role not set");
         notBlank(roleCode, "roleCode not set");
 
         tone.afterPropertiesSet();
+        system.afterPropertiesSet();
     }
 
     @Getter
@@ -42,13 +43,24 @@ public final class RbtApiSettings extends BaseModel implements InitializingBean 
     public static final class ToneSettings extends BaseModel implements InitializingBean {
         private static final long serialVersionUID = 5492040638431511670L;
 
-        private String portalType;
         private String catalogId;
 
         @Override
         public void afterPropertiesSet() {
-            notBlank(portalType, "tone.portalType not set");
             notBlank(catalogId, "tone.catalogId not set");
+        }
+    }
+
+    @Getter
+    @Setter
+    public static final class SystemSettings extends BaseModel implements InitializingBean {
+        private static final long serialVersionUID = -1319165674474641536L;
+
+        private String smLabel;
+
+        @Override
+        public void afterPropertiesSet() {
+            notBlank(smLabel, "system.smLabel not set");
         }
     }
 }

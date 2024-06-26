@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dbstarll.algeria.boot.model.api.request.BaseRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.BaseUpdateRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.system.SendSmRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
@@ -86,9 +87,16 @@ public final class RbtApi extends JsonApiClient {
             throws JsonProcessingException {
         request.setPortalAccount(settings.getPortalAccount());
         request.setPortalPwd(settings.getPortalPwd());
-        request.setPortalType(settings.getTone().getPortalType());
+        request.setPortalType(settings.getPortalType());
         consumer.accept(request);
         return jsonEntity(request);
+    }
+
+    private <T extends BaseUpdateRequest> HttpEntity authUpdate(final T request, final Consumer<T> consumer)
+            throws JsonProcessingException {
+        request.setRole(settings.getRole());
+        request.setRoleCode(settings.getRoleCode());
+        return auth(request, consumer);
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -150,9 +158,8 @@ public final class RbtApi extends JsonApiClient {
         private final String moduleRoot;
 
         public SendSmResponse sendSm(final String phone, final String code) throws IOException, ApiException {
-            return execute(post(moduleRoot + "/sendsm").setEntity(auth(new SendSmRequest(), request -> {
-                request.setRole(settings.getRole());
-                request.setRoleCode(settings.getRoleCode());
+            return execute(post(moduleRoot + "/sendsm").setEntity(authUpdate(new SendSmRequest(), request -> {
+                request.setSmLabel(settings.getSystem().getSmLabel());
                 request.setPhoneNumbers(new String[]{phone});
                 request.setPlaceHolderParams(new String[]{code});
             })).build(), SendSmResponse.class);
