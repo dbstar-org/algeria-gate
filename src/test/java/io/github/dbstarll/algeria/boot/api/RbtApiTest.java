@@ -10,12 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 class RbtApiTest {
+    private static final String TEST_MOBILE = "18210008434";
+
     @Autowired
     private RbtApi rbtApi;
     @Autowired
@@ -52,16 +53,16 @@ class RbtApiTest {
     }
 
     @Test
-    void getFileNotExist() throws IOException, ApiException {
-        final byte[] data = rbtApi.tone().get("13229000");
-        assertNotNull(data);
-        System.out.println(new String(data, StandardCharsets.UTF_8));
-        assertEquals(115, data.length);
+    void getFileNotExist() {
+        final RbtApiException e = assertThrowsExactly(RbtApiException.class, () -> rbtApi.tone().get("13229000"));
+        assertEquals("RBT call failed[302003]", e.getMessage());
+        assertEquals("302003", e.getReturnCode());
+        assertNull(e.getCause());
     }
 
     @Test
     void queryUser() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUser("18210008434"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUser(TEST_MOBILE));
         assertNotNull(body);
         assertEquals(5, body.size());
         assertEquals("000000", body.get("returnCode").textValue());
@@ -70,7 +71,7 @@ class RbtApiTest {
         assertEquals("0", body.get("resultCode").textValue());
         assertEquals(1, body.get("userInfos").size());
         assertEquals(29, body.at("/userInfos/0").size());
-        assertEquals("18210008434", body.at("/userInfos/0/phoneNumber").textValue());
+        assertEquals(TEST_MOBILE, body.at("/userInfos/0/phoneNumber").textValue());
         assertEquals(1, body.at("/userInfos/0/serviceOrders").size());
         assertEquals(18, body.at("/userInfos/0/serviceOrders/0").size());
         assertEquals("44070863", body.at("/userInfos/0/serviceOrders/0/orderID").textValue());
@@ -78,7 +79,7 @@ class RbtApiTest {
 
     @Test
     void queryInboxTone() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.user().tone().queryInboxTone("18210008434"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().tone().queryInboxTone(TEST_MOBILE));
         assertNotNull(body);
         assertEquals(5, body.size());
         assertEquals("000000", body.get("returnCode").textValue());
@@ -93,7 +94,7 @@ class RbtApiTest {
 
     @Test
     void queryUserProduct() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUserProduct("18176402111"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().queryUserProduct(TEST_MOBILE));
         assertNotNull(body);
         assertEquals(5, body.size());
         assertEquals("000000", body.get("returnCode").textValue());
@@ -107,8 +108,16 @@ class RbtApiTest {
     }
 
     @Test
+    void subscribe() {
+        final RbtApiException e = assertThrowsExactly(RbtApiException.class, () -> rbtApi.user().subscribe(TEST_MOBILE));
+        assertEquals("RBT call failed[301009]", e.getMessage());
+        assertEquals("301009", e.getReturnCode());
+        assertNull(e.getCause());
+    }
+
+    @Test
     void sendSm() throws IOException, ApiException {
-        final JsonNode body = objectMapper.valueToTree(rbtApi.system().sendSm("18918606202", "478722"));
+        final JsonNode body = objectMapper.valueToTree(rbtApi.system().sendSm(TEST_MOBILE, "478722"));
         assertNotNull(body);
         assertEquals(3, body.size());
         assertEquals("000000", body.get("returnCode").textValue());

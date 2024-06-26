@@ -14,12 +14,14 @@ import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRe
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryInboxToneRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserProductRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.user.SubscribeRequest;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.system.SendSmResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryInboxToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserProductResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -33,6 +35,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.springframework.data.util.Predicates;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -79,6 +82,23 @@ public final class RbtApi extends JsonApiClient {
                 .map(RbtApiException::new);
         if (optException.isPresent()) {
             throw optException.get();
+        }
+        final Optional<RbtApiException> optBytesException = Optional.ofNullable(finalResult)
+                .filter(byte[].class::isInstance).map(byte[].class::cast)
+                .filter(d -> d[0] == '{' && d[d.length - 1] == '}')
+                .map(d -> new String(d, StandardCharsets.UTF_8))
+                .map(s -> {
+                    try {
+                        return mapper.readTree(s);
+                    } catch (JsonProcessingException e) {
+                        throw new UnsupportedOperationException(e);
+                    }
+                })
+                .map(node -> node.get("returnCode")).map(JsonNode::textValue)
+                .filter(Predicates.negate(BaseResponse.RETURN_CODE_SUCCESS::equals))
+                .map(RbtApiException::new);
+        if (optBytesException.isPresent()) {
+            throw optBytesException.get();
         }
         return finalResult;
     }
@@ -137,6 +157,12 @@ public final class RbtApi extends JsonApiClient {
             return execute(post(moduleRoot + "/queryuserproduct")
                     .setEntity(auth(new QueryUserProductRequest(),
                             request -> request.setPhoneNumber(phone))).build(), QueryUserProductResponse.class);
+        }
+
+        public SubscribeResponse subscribe(final String phone) throws IOException, ApiException {
+            return execute(post(moduleRoot + "/subscribe")
+                    .setEntity(authUpdate(new SubscribeRequest(),
+                            request -> request.setPhoneNumber(phone))).build(), SubscribeResponse.class);
         }
     }
 
