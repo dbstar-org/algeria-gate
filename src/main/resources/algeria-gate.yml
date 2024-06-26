@@ -50,8 +50,8 @@ algeria-gate:
       portal-account: admin
       portal-pwd: IVAS@Huawei_1234
       portal-type: 71
-      role: 1
-      role-code: 18281767020
+      role: 3
+      role-code: admin
       tone:
         catalog-id: 400960
       system:

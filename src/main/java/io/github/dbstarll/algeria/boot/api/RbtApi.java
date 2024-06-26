@@ -11,17 +11,13 @@ import io.github.dbstarll.algeria.boot.model.api.request.BaseUpdateRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.system.SendSmRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.GetFileRequest;
 import io.github.dbstarll.algeria.boot.model.api.request.tone.QueryCatalogToneRequest;
-import io.github.dbstarll.algeria.boot.model.api.request.user.QueryInboxToneRequest;
-import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserProductRequest;
-import io.github.dbstarll.algeria.boot.model.api.request.user.QueryUserRequest;
-import io.github.dbstarll.algeria.boot.model.api.request.user.SubscribeRequest;
+import io.github.dbstarll.algeria.boot.model.api.request.user.*;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.system.SendSmResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.tone.QueryCatalogToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryInboxToneResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserProductResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.QueryUserResponse;
-import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProductResponse;
 import io.github.dbstarll.utils.http.client.request.RelativeUriResolver;
 import io.github.dbstarll.utils.json.jackson.JsonApiClient;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -159,10 +155,26 @@ public final class RbtApi extends JsonApiClient {
                             request -> request.setPhoneNumber(phone))).build(), QueryUserProductResponse.class);
         }
 
-        public SubscribeResponse subscribe(final String phone) throws IOException, ApiException {
+        public BaseResponse subscribe(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/subscribe")
                     .setEntity(authUpdate(new SubscribeRequest(),
-                            request -> request.setPhoneNumber(phone))).build(), SubscribeResponse.class);
+                            request -> request.setPhoneNumber(phone))).build(), BaseResponse.class);
+        }
+
+        public SubscribeProductResponse subscribeProduct(final String phone) throws IOException, ApiException {
+            return execute(post(moduleRoot + "/subscribeproduct")
+                    .setEntity(authUpdate(new SubscribeProductRequest(), request -> {
+                        request.setPhoneNumbers(new String[]{phone});
+                        request.setProductID("13");
+                    })).build(), SubscribeProductResponse.class);
+        }
+
+        public SubscribeProductResponse unsubscribeProduct(final String phone) throws IOException, ApiException {
+            return execute(post(moduleRoot + "/unsubscribeproduct")
+                    .setEntity(authUpdate(new UnsubscribeProductRequest(), request -> {
+                        request.setPhoneNumbers(new String[]{phone});
+                        request.setProductID("13");
+                    })).build(), SubscribeProductResponse.class);
         }
     }
 
@@ -183,12 +195,12 @@ public final class RbtApi extends JsonApiClient {
     public class System {
         private final String moduleRoot;
 
-        public SendSmResponse sendSm(final String phone, final String code) throws IOException, ApiException {
+        public BaseResponse sendSm(final String phone, final String code) throws IOException, ApiException {
             return execute(post(moduleRoot + "/sendsm").setEntity(authUpdate(new SendSmRequest(), request -> {
                 request.setSmLabel(settings.getSystem().getSmLabel());
                 request.setPhoneNumbers(new String[]{phone});
                 request.setPlaceHolderParams(new String[]{code});
-            })).build(), SendSmResponse.class);
+            })).build(), BaseResponse.class);
         }
     }
 

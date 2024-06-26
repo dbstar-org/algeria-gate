@@ -101,10 +101,22 @@ class RbtApiTest {
         assertEquals("-1", body.get("recordSum").textValue());
         assertEquals("0", body.get("operationID").textValue());
         assertEquals("0", body.get("resultCode").textValue());
-        assertEquals(1, body.get("toneInfos").size());
-        assertEquals(52, body.at("/toneInfos/0").size());
-        assertEquals("13219578", body.at("/toneInfos/0/toneID").textValue());
-        assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());
+        assertEquals(1, body.get("userProductInfos").size());
+        assertEquals(2, body.at("/userProductInfos/0").size());
+        assertEquals(TEST_MOBILE, body.at("/userProductInfos/0/phoneNumber").textValue());
+        assertEquals(1, body.at("/userProductInfos/0/productinfos").size());
+        assertEquals(11, body.at("/userProductInfos/0/productinfos/0").size());
+        assertEquals("13", body.at("/userProductInfos/0/productinfos/0/productID").textValue());
+        assertEquals("2", body.at("/userProductInfos/0/productinfos/0/status").textValue());
+        assertTrue(body.at("/userProductInfos/0/productinfos/0/createTime").isTextual());
+        assertEquals("2024-06-26 10:30:07", body.at("/userProductInfos/0/productinfos/0/initialCreateTime").textValue());
+        assertEquals("1", body.at("/userProductInfos/0/productinfos/0/renewMode").textValue());
+        assertEquals("2024-07-25", body.at("/userProductInfos/0/productinfos/0/monthFeeEndDate").textValue());
+        assertEquals("0", body.at("/userProductInfos/0/productinfos/0/isTrialUser").textValue());
+        assertEquals("0", body.at("/userProductInfos/0/productinfos/0/isArrear").textValue());
+        assertEquals("71", body.at("/userProductInfos/0/productinfos/0/portalType").textValue());
+        assertEquals("2024-06-26 00:00:00", body.at("/userProductInfos/0/productinfos/0/chargeBeginTime").textValue());
+        assertEquals("100", body.at("/userProductInfos/0/productinfos/0/chargedPrice").textValue());
     }
 
     @Test
@@ -113,6 +125,38 @@ class RbtApiTest {
         assertEquals("RBT call failed[301009]", e.getMessage());
         assertEquals("301009", e.getReturnCode());
         assertNull(e.getCause());
+    }
+
+    @Test
+    void subscribeProduct() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().subscribeProduct(TEST_MOBILE));
+        assertNotNull(body);
+        assertEquals(4, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
+        assertEquals(1, body.get("returnObjects").size());
+        assertEquals(4, body.at("/returnObjects/0").size());
+        assertEquals(TEST_MOBILE, body.at("/returnObjects/0/phoneNumber").textValue());
+        assertEquals("000000", body.at("/returnObjects/0/resultCode").textValue());
+        assertEquals("2", body.at("/returnObjects/0/status").textValue());
+        assertEquals("", body.at("/returnObjects/0/serviceID").textValue());
+    }
+
+    @Test
+    void unsubscribeProduct() throws IOException, ApiException {
+        final JsonNode body = objectMapper.valueToTree(rbtApi.user().unsubscribeProduct(TEST_MOBILE));
+        assertNotNull(body);
+        assertEquals(4, body.size());
+        assertEquals("000000", body.get("returnCode").textValue());
+        assertEquals("0", body.get("operationID").textValue());
+        assertEquals("0", body.get("resultCode").textValue());
+        assertEquals(1, body.get("returnObjects").size());
+        assertEquals(4, body.at("/returnObjects/0").size());
+        assertEquals(TEST_MOBILE, body.at("/returnObjects/0/phoneNumber").textValue());
+        assertEquals("000000", body.at("/returnObjects/0/resultCode").textValue());
+        assertEquals("4", body.at("/returnObjects/0/status").textValue());
+        assertEquals("", body.at("/returnObjects/0/serviceID").textValue());
     }
 
     @Test
