@@ -32,7 +32,6 @@
     <version.lombok>1.18.30</version.lombok>
     <version.uuid-creator>5.3.7</version.uuid-creator>
     <version.spring-boot>2.7.18</version.spring-boot>
-    <version.mysql-connector>8.4.0</version.mysql-connector>
     <version.knife4j-openapi3-spring-boot>4.5.0</version.knife4j-openapi3-spring-boot>
   </properties>
 
@@ -78,19 +77,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-      <version>${version.spring-boot}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
       <version>${version.spring-boot}</version>
-    </dependency>
-    <!-- mysql driver -->
-    <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
-      <version>${version.mysql-connector}</version>
     </dependency>
     <!-- openapi3 -->
     <dependency>
@@ -116,12 +104,6 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-          <version>2.1.214</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>com.github.fppt</groupId>
           <artifactId>jedis-mock</artifactId>
           <version>1.0.9</version>
@@ -143,7 +125,6 @@
               <systemPropertyVariables>
                 <spring.config.name>algeria-gate</spring.config.name>
                 <spring.profiles.active>test</spring.profiles.active>
-                <spring.config.encrypt-key>testKey</spring.config.encrypt-key>
               </systemPropertyVariables>
             </configuration>
           </plugin>
