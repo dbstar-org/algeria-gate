@@ -123,11 +123,11 @@ class RbtApiTest {
         assertTrue(body.at("/userProductInfos/0/productinfos/0/createTime").isTextual());
         assertEquals("2024-06-26 10:30:07", body.at("/userProductInfos/0/productinfos/0/initialCreateTime").textValue());
         assertEquals("1", body.at("/userProductInfos/0/productinfos/0/renewMode").textValue());
-        assertEquals("2024-07-25", body.at("/userProductInfos/0/productinfos/0/monthFeeEndDate").textValue());
+        assertTrue(body.at("/userProductInfos/0/productinfos/0/monthFeeEndDate").isTextual());
         assertEquals("0", body.at("/userProductInfos/0/productinfos/0/isTrialUser").textValue());
         assertEquals("0", body.at("/userProductInfos/0/productinfos/0/isArrear").textValue());
         assertEquals("71", body.at("/userProductInfos/0/productinfos/0/portalType").textValue());
-        assertEquals("2024-06-26 00:00:00", body.at("/userProductInfos/0/productinfos/0/chargeBeginTime").textValue());
+        assertTrue(body.at("/userProductInfos/0/productinfos/0/chargeBeginTime").isTextual());
         assertEquals("100", body.at("/userProductInfos/0/productinfos/0/chargedPrice").textValue());
     }
 

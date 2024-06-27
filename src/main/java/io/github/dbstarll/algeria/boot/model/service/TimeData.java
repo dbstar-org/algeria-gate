@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 public abstract class TimeData extends BaseModel {
     private static final long serialVersionUID = -8328691395982585249L;
 
-    private final long time = System.currentTimeMillis();
+    private long time = System.currentTimeMillis();
 
     @Override
     protected StringJoiner addToStringEntry(final StringJoiner joiner) {
@@ -19,5 +19,9 @@ public abstract class TimeData extends BaseModel {
 
     public boolean expire(final Duration duration) {
         return System.currentTimeMillis() - time >= duration.toMillis();
+    }
+
+    public void renew() {
+        this.time = System.currentTimeMillis();
     }
 }

@@ -2,6 +2,7 @@ package io.github.dbstarll.algeria.boot.service.impl;
 
 import io.github.dbstarll.algeria.boot.api.RbtApi;
 import io.github.dbstarll.algeria.boot.error.FrequentlyObtainVerifyCodeException;
+import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
 import io.github.dbstarll.algeria.boot.error.InvalidVerifyCodeException;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.model.service.VerifyCodeTimeData;
@@ -23,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 class UserServiceImpl implements UserService {
     private static final Duration VERIFY_CODE_INTERVAL = Duration.ofMinutes(1);
     private static final Duration VERIFY_CODE_DURATION = Duration.ofMinutes(5);
+    private static final Duration SESSION_DURATION = Duration.ofMinutes(30);
 
     private final RbtApi rbtApi;
     private final VerifyCodeService verifyCodeService;
@@ -42,16 +44,31 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UUID login(final String phone, final String verifyCode) {
+    public UUID login(final String phone, final String verifyCode) throws IOException, ApiException {
         verifyCodes.compute(phone, (k, v) -> {
             if (v == null || v.expire(VERIFY_CODE_DURATION) || !verifyCode.equals(v.getVerifyCode())) {
                 throw new InvalidVerifyCodeException("验证码错误");
             } else {
-                return v;
+                return null;
             }
         });
         final UUID token = Uuid.generate();
-        sessions.put(token, new SessionTimeData(phone));
+        sessions.put(token, new SessionTimeData(phone,
+                rbtApi.user().queryUser(phone).getUserInfos(),
+                rbtApi.user().queryUserProduct(phone).getUserProductInfos(),
+                rbtApi.user().tone().queryInboxTone(phone).getToneInfos()
+        ));
         return token;
+    }
+
+    @Override
+    public SessionTimeData verify(UUID token) {
+        return sessions.compute(token, (k, v) -> {
+            if (v == null || v.expire(SESSION_DURATION)) {
+                throw new InvalidAccessTokenException("Invalid Access-Token");
+            } else {
+                return v;
+            }
+        });
     }
 }

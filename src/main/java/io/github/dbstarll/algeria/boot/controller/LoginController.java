@@ -2,6 +2,7 @@ package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
+import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,10 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -33,10 +31,16 @@ class LoginController {
         return GeneralResponse.ok(true);
     }
 
-    @Operation(summary = "手机+验证码登录", description = "手机+验证码登录.")
+    @Operation(summary = "手机+验证码登录", description = "手机+验证码登录并获得token.")
     @PostMapping("/phone")
-    GeneralResponse<UUID> loginPhone(@Valid @RequestBody final LoginRequest request) {
+    GeneralResponse<UUID> loginPhone(@Valid @RequestBody final LoginRequest request) throws IOException, ApiException {
         return GeneralResponse.ok(userService.login(request.getPhone(), request.getVerifyCode()));
+    }
+
+    @Operation(summary = "验证token", description = "检查token是否有效，并返回用户信息.")
+    @GetMapping("/verify")
+    GeneralResponse<SessionTimeData> verify(@RequestHeader("gate-access-token") final UUID token) {
+        return GeneralResponse.ok(userService.verify(token));
     }
 
     @Getter

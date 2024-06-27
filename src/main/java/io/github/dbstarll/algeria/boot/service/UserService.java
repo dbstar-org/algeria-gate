@@ -1,5 +1,6 @@
 package io.github.dbstarll.algeria.boot.service;
 
+import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.utils.net.api.ApiException;
 
 import java.io.IOException;
@@ -13,5 +14,7 @@ public interface UserService {
      */
     void verifyCode(String phone) throws IOException, ApiException;
 
-    UUID login(String phone, String verifyCode);
+    UUID login(String phone, String verifyCode) throws IOException, ApiException;
+
+    SessionTimeData verify(UUID token);
 }

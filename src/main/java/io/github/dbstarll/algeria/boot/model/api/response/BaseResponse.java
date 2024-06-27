@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.StringJoiner;
+
 @Getter
 @Setter
 public class BaseResponse extends BaseModel {
@@ -32,5 +34,15 @@ public class BaseResponse extends BaseModel {
 
     public boolean success() {
         return RETURN_CODE_SUCCESS.equals(returnCode);
+    }
+
+    @Override
+    protected StringJoiner addToStringEntry(final StringJoiner joiner) {
+        return super.addToStringEntry(joiner)
+                .add("returnCode=" + getReturnCode())
+                .add("resultCode=" + getResultCode())
+                .add("resultInfo=" + getResultInfo())
+                .add("operationID=" + getOperationID())
+                .add("transactionID=" + getTransactionID());
     }
 }
