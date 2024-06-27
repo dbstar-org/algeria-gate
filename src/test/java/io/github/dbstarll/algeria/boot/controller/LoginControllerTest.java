@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class LoginControllerTest extends AbstractBaseSpringBootTest {
     private static final String TEST_MOBILE = "18210008434";
-    private static final String TEST_TONE_ID = "13229395";
 
     @Test
     void verifyCode() {
@@ -53,7 +52,7 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
 
         final LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPhone(TEST_MOBILE);
-        loginRequest.setVerifyCode("000000");
+        loginRequest.setVerifyCode("476287");
         final ResponseEntity<JsonNode> loginRes = restTemplate.postForEntity("/api/login/phone", loginRequest, JsonNode.class);
         assertEquals(HttpStatus.OK, loginRes.getStatusCode());
         final JsonNode loginBody = loginRes.getBody();
@@ -76,5 +75,4 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
         assertEquals(1, verifyBody.at("/data/tones").size());
         assertEquals(52, verifyBody.at("/data/tones/0").size());
     }
-
 }

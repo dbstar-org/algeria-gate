@@ -10,3 +10,6 @@ spring:
   redis:
     timeout: 2000
     port: 26379
+
+algeria-gate:
+  verify-code: "476287"
