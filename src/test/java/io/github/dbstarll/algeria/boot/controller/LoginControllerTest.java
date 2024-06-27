@@ -1,25 +1,21 @@
 package io.github.dbstarll.algeria.boot.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dbstarll.algeria.boot.AbstractBaseSpringBootTest;
 import io.github.dbstarll.algeria.boot.error.ErrorCodes;
-import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static io.github.dbstarll.algeria.boot.controller.LoginController.LoginRequest;
 import static io.github.dbstarll.algeria.boot.controller.LoginController.PhoneRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class LoginControllerTest {
+class LoginControllerTest extends AbstractBaseSpringBootTest {
     private static final String TEST_MOBILE = "18210008434";
     private static final String TEST_TONE_ID = "13229395";
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @Test
     void verifyCode() {
@@ -66,11 +62,7 @@ class LoginControllerTest {
         assertEquals(ErrorCodes.SUCCESS, loginBody.get("code").intValue());
         assertTrue(loginBody.get("data").isTextual());
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("gate-access-token", loginBody.get("data").textValue());
-        final ResponseEntity<JsonNode> verifyRes = restTemplate.exchange("/api/login/verify", HttpMethod.GET, new HttpEntity<>(headers), JsonNode.class);
-        assertEquals(HttpStatus.OK, verifyRes.getStatusCode());
-        final JsonNode verifyBody = verifyRes.getBody();
+        final JsonNode verifyBody = getForEntity(loginBody.get("data").textValue(), "/api/user/verify");
         assertNotNull(verifyBody);
         assertEquals(2, verifyBody.size());
         assertEquals(ErrorCodes.SUCCESS, verifyBody.get("code").intValue());
@@ -85,17 +77,4 @@ class LoginControllerTest {
         assertEquals(52, verifyBody.at("/data/tones/0").size());
     }
 
-    @Test
-    void verify() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("gate-access-token", Uuid.toString(Uuid.generate()));
-        final ResponseEntity<JsonNode> verifyRes = restTemplate.exchange("/api/login/verify", HttpMethod.GET, new HttpEntity<>(headers), JsonNode.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, verifyRes.getStatusCode());
-        final JsonNode verifyBody = verifyRes.getBody();
-        assertNotNull(verifyBody);
-        assertEquals(3, verifyBody.size());
-        assertEquals(ErrorCodes.INVALID_ACCESS_TOKEN, verifyBody.get("code").intValue());
-        assertEquals("Invalid Access-Token", verifyBody.get("message").textValue());
-        assertEquals("InvalidAccessTokenException", verifyBody.get("type").textValue());
-    }
 }

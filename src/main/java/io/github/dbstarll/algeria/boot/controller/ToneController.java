@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
+import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,13 +24,13 @@ class ToneController {
 
     @Operation(summary = "更新彩铃列表", description = "更新彩铃列表.")
     @GetMapping("/update")
-    int update() throws IOException, ApiException {
-        return toneService.update();
+    GeneralResponse<Integer> update() throws IOException, ApiException {
+        return GeneralResponse.ok(toneService.update());
     }
 
     @Operation(summary = "获得彩铃列表", description = "获得彩铃列表.")
     @GetMapping("/list")
-    List<ToneInfo> list() {
-        return toneService.list();
+    GeneralResponse<List<ToneInfo>> list() {
+        return GeneralResponse.ok(toneService.list());
     }
 }

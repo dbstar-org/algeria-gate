@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dbstarll.algeria.boot.error.ErrorCodes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,16 +19,20 @@ class ToneControllerTest {
     void update() {
         final JsonNode body = restTemplate.getForObject("/api/tone/update", JsonNode.class);
         assertNotNull(body);
-        assertEquals(1, body.intValue());
+        assertEquals(2, body.size());
+        assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+        assertEquals(1, body.get("data").intValue());
     }
 
     @Test
     void list() {
         final JsonNode body = restTemplate.getForObject("/api/tone/list", JsonNode.class);
         assertNotNull(body);
-        assertEquals(1, body.size());
-        assertEquals(35, body.at("/0").size());
-        assertEquals("13229395", body.at("/0/toneID").textValue());
-        assertEquals("520016", body.at("/0/toneCode").textValue());
+        assertEquals(2, body.size());
+        assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+        assertEquals(1, body.at("/data").size());
+        assertEquals(35, body.at("/data/0").size());
+        assertEquals("13229395", body.at("/data/0/toneID").textValue());
+        assertEquals("520016", body.at("/data/0/toneCode").textValue());
     }
 }
