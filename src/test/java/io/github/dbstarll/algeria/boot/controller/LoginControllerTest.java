@@ -60,19 +60,5 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
         assertEquals(2, loginBody.size());
         assertEquals(ErrorCodes.SUCCESS, loginBody.get("code").intValue());
         assertTrue(loginBody.get("data").isTextual());
-
-        final JsonNode verifyBody = getForEntity(loginBody.get("data").textValue(), "/api/user/verify");
-        assertNotNull(verifyBody);
-        assertEquals(2, verifyBody.size());
-        assertEquals(ErrorCodes.SUCCESS, verifyBody.get("code").intValue());
-        assertEquals(5, verifyBody.get("data").size());
-        assertTrue(verifyBody.at("/data/time").isLong());
-        assertEquals(TEST_MOBILE, verifyBody.at("/data/phone").textValue());
-        assertEquals(1, verifyBody.at("/data/users").size());
-        assertEquals(29, verifyBody.at("/data/users/0").size());
-        assertEquals(1, verifyBody.at("/data/products").size());
-        assertEquals(2, verifyBody.at("/data/products/0").size());
-        assertEquals(1, verifyBody.at("/data/tones").size());
-        assertEquals(52, verifyBody.at("/data/tones/0").size());
     }
 }

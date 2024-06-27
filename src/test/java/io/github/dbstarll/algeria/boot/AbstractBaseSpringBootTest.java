@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dbstarll.algeria.boot.error.ErrorCodes;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -8,9 +9,11 @@ import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractBaseSpringBootTest {
     protected static final String JAVA_VERSION = System.getProperty("java.version");
@@ -28,6 +31,30 @@ public abstract class AbstractBaseSpringBootTest {
         final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setOutputStreaming(false);
         restTemplate.getRestTemplate().setRequestFactory(requestFactory);
+    }
+
+    protected final void withAccessToken(final String phone, final Consumer<String> consumer) {
+        final Map<String, String> request = Collections.singletonMap("phone", phone);
+        final ResponseEntity<JsonNode> res = restTemplate.postForEntity("/api/login/verify-code", request, JsonNode.class);
+        assertEquals(HttpStatus.OK, res.getStatusCode());
+        final JsonNode body = res.getBody();
+        assertNotNull(body);
+        assertEquals(2, body.size());
+        assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+        assertTrue(body.get("data").booleanValue());
+
+        final Map<String, String> loginRequest = new HashMap<>();
+        loginRequest.put("phone", phone);
+        loginRequest.put("verifyCode", "476287");
+        final ResponseEntity<JsonNode> loginRes = restTemplate.postForEntity("/api/login/phone", loginRequest, JsonNode.class);
+        assertEquals(HttpStatus.OK, loginRes.getStatusCode());
+        final JsonNode loginBody = loginRes.getBody();
+        assertNotNull(loginBody);
+        assertEquals(2, loginBody.size());
+        assertEquals(ErrorCodes.SUCCESS, loginBody.get("code").intValue());
+        assertTrue(loginBody.get("data").isTextual());
+
+        consumer.accept(loginBody.get("data").textValue());
     }
 
     protected final <R> JsonNode postForEntity(final String accessToken, final String url, final R request) {
