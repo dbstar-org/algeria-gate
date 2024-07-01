@@ -1,5 +1,6 @@
 package io.github.dbstarll.algeria.boot.model.response;
 
+import io.github.dbstarll.algeria.boot.error.ExceptionData;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -74,6 +75,20 @@ public final class GeneralResponse<D> extends BaseModel {
     public static <E extends Exception, T> GeneralResponse<T> exception(
             final E exception, final ToIntFunction<E> fnCode, final Function<E, T> fnData) {
         return exception(exception, fnCode, Throwable::getMessage, GeneralResponse::typeOfClassSimpleName, fnData);
+    }
+
+    /**
+     * 构建一个基于异常信息的GeneralResponse.
+     *
+     * @param exception 异常信息
+     * @param data      主体数据
+     * @param <E>       异常的类型
+     * @param <T>       主体数据的类型
+     * @return GeneralResponse
+     */
+    public static <E extends Exception, T extends ExceptionData<E>> GeneralResponse<T> exception(
+            final E exception, final T data) {
+        return exception(exception, data::code, data::message, data::type, e -> data);
     }
 
     /**

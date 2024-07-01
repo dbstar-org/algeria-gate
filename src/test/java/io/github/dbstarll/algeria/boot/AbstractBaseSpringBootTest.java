@@ -61,12 +61,22 @@ public abstract class AbstractBaseSpringBootTest {
         return postForEntity(accessToken, url, request, JsonNode.class);
     }
 
+    protected final <R> JsonNode postForEntity(final String accessToken, final String url, final R request, final HttpStatus status) {
+        return postForEntity(accessToken, url, request, JsonNode.class, status);
+    }
+
     protected final <R, T> T postForEntity(final String accessToken, final String url, final R request,
                                            final Class<T> responseType) {
+
+        return postForEntity(accessToken, url, request, responseType, HttpStatus.OK);
+    }
+
+    protected final <R, T> T postForEntity(final String accessToken, final String url, final R request,
+                                           final Class<T> responseType, final HttpStatus status) {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("gate-access-token", accessToken);
         final ResponseEntity<T> res = restTemplate.postForEntity(url, new HttpEntity<>(request, headers), responseType);
-        assertEquals(200, res.getStatusCodeValue());
+        assertEquals(status, res.getStatusCode());
         final T body = res.getBody();
         assertNotNull(body);
         return body;

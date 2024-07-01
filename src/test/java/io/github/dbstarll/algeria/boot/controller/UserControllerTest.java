@@ -18,7 +18,7 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
     private static final String TEST_TONE_ID = "13229395";
 
     @Test
-    void loginPhone() {
+    void verify() {
         withAccessToken(TEST_MOBILE, token -> {
             final JsonNode verifyBody = getForEntity(token, "/api/user/verify");
             assertEquals(2, verifyBody.size());
@@ -57,6 +57,20 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             assertEquals("60", body.at("/data/0/duration").textValue());
             assertTrue(body.at("/data/0/chargeTime").isTextual());
             assertTrue(body.at("/data/0/relativeExpiryDate").isTextual());
+        });
+    }
+
+    @Test
+    void easyDownloadFailed() {
+        withAccessToken(TEST_MOBILE, token -> {
+            final ResourceRequest request = new ResourceRequest("123456");
+            final JsonNode body = postForEntity(token, "/api/user/easy-download", request, HttpStatus.INTERNAL_SERVER_ERROR);
+            assertEquals(4, body.size());
+            assertEquals(ErrorCodes.RBT_API_FAILED, body.get("code").intValue());
+            assertEquals("RBT call failed[301549]", body.get("message").textValue());
+            assertEquals("RbtApiException", body.get("type").textValue());
+            assertEquals(1, body.get("data").size());
+            assertEquals("301549", body.at("/data/returnCode").textValue());
         });
     }
 
