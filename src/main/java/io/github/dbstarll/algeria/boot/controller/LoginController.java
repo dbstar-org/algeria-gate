@@ -2,33 +2,36 @@ package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
+import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.UserService;
+import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 @Tag(name = "登录管理")
 @RestController
 @RequestMapping(path = "/api/login", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Slf4j
 class LoginController {
     private final UserService userService;
 
     @Operation(summary = "发送验证码", description = "向指定的手机发送随机验证码")
     @PostMapping("/verify-code")
     GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request) throws IOException, ApiException {
+        log.debug("verifyCode: {}", request);
         userService.verifyCode(request.getPhone());
         return GeneralResponse.ok(true);
     }
@@ -36,7 +39,16 @@ class LoginController {
     @Operation(summary = "手机+验证码登录", description = "手机+验证码登录并获得token.")
     @PostMapping("/phone")
     GeneralResponse<UUID> loginPhone(@Valid @RequestBody final LoginRequest request) throws IOException, ApiException {
+        log.debug("loginPhone: {}", request);
         return GeneralResponse.ok(userService.login(request.getPhone(), request.getVerifyCode()));
+    }
+
+    @Operation(summary = "退出登录", description = "退出当前登录并使token失效.")
+    @GetMapping("/logout")
+    GeneralResponse<SessionTimeData> logout(@RequestHeader("gate-access-token") final UUID token) {
+        log.debug("logout: {}", Uuid.toString(token));
+        userService.verify(token, false);
+        return GeneralResponse.ok(userService.logout(token));
     }
 
     @Getter
@@ -47,6 +59,11 @@ class LoginController {
         @NotBlank
         @Schema(description = "手机验证码")
         private String verifyCode;
+
+        @Override
+        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+            return super.addToStringEntry(joiner).add("verifyCode=" + getVerifyCode());
+        }
     }
 
     @Getter
@@ -59,5 +76,10 @@ class LoginController {
         @NotBlank
         @Schema(description = "手机号码")
         private String phone;
+
+        @Override
+        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+            return super.addToStringEntry(joiner).add("phone=" + getPhone());
+        }
     }
 }

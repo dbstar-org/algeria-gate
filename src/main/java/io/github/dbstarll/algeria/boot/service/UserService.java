@@ -16,5 +16,7 @@ public interface UserService {
 
     UUID login(String phone, String verifyCode) throws IOException, ApiException;
 
-    SessionTimeData verify(UUID token);
+    SessionTimeData verify(UUID token, boolean renew);
+
+    SessionTimeData logout(UUID token);
 }

@@ -62,13 +62,21 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SessionTimeData verify(UUID token) {
+    public SessionTimeData verify(UUID token, boolean renew) {
         return sessions.compute(token, (k, v) -> {
             if (v == null || v.expire(SESSION_DURATION)) {
                 throw new InvalidAccessTokenException("Invalid Access-Token");
             } else {
+                if (renew) {
+                    v.renew();
+                }
                 return v;
             }
         });
+    }
+
+    @Override
+    public SessionTimeData logout(UUID token) {
+        return sessions.remove(token);
     }
 }

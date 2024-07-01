@@ -6,11 +6,13 @@ import io.github.dbstarll.algeria.boot.model.api.response.user.ContentDownloadIn
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.UserService;
+import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import io.github.dbstarll.utils.net.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +20,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 @Tag(name = "用户管理")
 @RestController
 @RequestMapping(path = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Slf4j
 class UserController {
     private final UserService userService;
     private final RbtApi rbtApi;
@@ -31,7 +35,8 @@ class UserController {
     @Operation(summary = "验证token", description = "检查token是否有效，并返回用户信息.")
     @GetMapping("/verify")
     GeneralResponse<SessionTimeData> verify(@RequestHeader("gate-access-token") final UUID token) {
-        return GeneralResponse.ok(userService.verify(token));
+        log.debug("verify: {}", Uuid.toString(token));
+        return GeneralResponse.ok(userService.verify(token, false));
     }
 
     @Operation(summary = "开通并下载铃音", description = "该接口用于通过下载铃音或音乐盒开通RBT业务特性.")
@@ -39,7 +44,8 @@ class UserController {
     GeneralResponse<List<ContentDownloadInfo>> easyDownload(@RequestHeader("gate-access-token") final UUID token,
                                                             @Valid @RequestBody final ResourceRequest request)
             throws IOException, ApiException {
-        final SessionTimeData session = userService.verify(token);
+        log.debug("easyDownload: {}", request);
+        final SessionTimeData session = userService.verify(token, true);
         return GeneralResponse.ok(rbtApi.user().easyDownload(session.getPhone(), request.getResourceId()).getContentDownloadInfo());
     }
 
@@ -48,7 +54,8 @@ class UserController {
     GeneralResponse<String> delInboxTone(@RequestHeader("gate-access-token") final UUID token,
                                          @Valid @RequestBody final ResourceRequest request)
             throws IOException, ApiException {
-        final SessionTimeData session = userService.verify(token);
+        log.debug("delInboxTone: {}", request);
+        final SessionTimeData session = userService.verify(token, true);
         return GeneralResponse.ok(rbtApi.user().tone().delInboxTone(session.getPhone(), request.getResourceId()).getResultInfo());
     }
 
@@ -62,5 +69,10 @@ class UserController {
         @NotBlank
         @Schema(description = "铃音的内部ID")
         private String resourceId;
+
+        @Override
+        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+            return super.addToStringEntry(joiner).add("resourceId=" + getResourceId());
+        }
     }
 }
