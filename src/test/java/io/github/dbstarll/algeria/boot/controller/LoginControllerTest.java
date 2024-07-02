@@ -28,7 +28,7 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
         assertTrue(body.get("data").booleanValue());
 
         final ResponseEntity<JsonNode> res2 = restTemplate.postForEntity("/api/login/verify-code", request, JsonNode.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res2.getStatusCode());
+        assertEquals(HttpStatus.OK, res2.getStatusCode());
         final JsonNode body2 = res2.getBody();
         assertNotNull(body2);
         assertEquals(4, body2.size());

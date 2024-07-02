@@ -61,22 +61,11 @@ public abstract class AbstractBaseSpringBootTest {
         return postForEntity(accessToken, url, request, JsonNode.class);
     }
 
-    protected final <R> JsonNode postForEntity(final String accessToken, final String url, final R request, final HttpStatus status) {
-        return postForEntity(accessToken, url, request, JsonNode.class, status);
-    }
-
-    protected final <R, T> T postForEntity(final String accessToken, final String url, final R request,
-                                           final Class<T> responseType) {
-
-        return postForEntity(accessToken, url, request, responseType, HttpStatus.OK);
-    }
-
-    protected final <R, T> T postForEntity(final String accessToken, final String url, final R request,
-                                           final Class<T> responseType, final HttpStatus status) {
+    protected final <R, T> T postForEntity(final String accessToken, final String url, final R request, final Class<T> responseType) {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("gate-access-token", accessToken);
         final ResponseEntity<T> res = restTemplate.postForEntity(url, new HttpEntity<>(request, headers), responseType);
-        assertEquals(status, res.getStatusCode());
+        assertEquals(HttpStatus.OK, res.getStatusCode());
         final T body = res.getBody();
         assertNotNull(body);
         return body;
@@ -86,19 +75,11 @@ public abstract class AbstractBaseSpringBootTest {
         return getForEntity(accessToken, url, JsonNode.class);
     }
 
-    protected final JsonNode getForEntity(final String accessToken, final String url, final HttpStatus status) {
-        return getForEntity(accessToken, url, JsonNode.class, status);
-    }
-
     protected final <T> T getForEntity(final String accessToken, final String url, final Class<T> responseType) {
-        return getForEntity(accessToken, url, responseType, HttpStatus.OK);
-    }
-
-    protected final <T> T getForEntity(final String accessToken, final String url, final Class<T> responseType, final HttpStatus status) {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("gate-access-token", accessToken);
         final ResponseEntity<T> res = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), responseType);
-        assertEquals(status, res.getStatusCode());
+        assertEquals(HttpStatus.OK, res.getStatusCode());
         final T body = res.getBody();
         assertNotNull(body);
         return body;

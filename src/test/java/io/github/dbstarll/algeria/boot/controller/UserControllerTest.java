@@ -34,7 +34,7 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
 
     @Test
     void verifyFailed() {
-        final JsonNode verifyBody = getForEntity(Uuid.toString(Uuid.generate()), "/api/user/verify", HttpStatus.UNAUTHORIZED);
+        final JsonNode verifyBody = getForEntity(Uuid.toString(Uuid.generate()), "/api/user/verify");
         assertEquals(3, verifyBody.size());
         assertEquals(ErrorCodes.INVALID_ACCESS_TOKEN, verifyBody.get("code").intValue());
         assertEquals("Invalid Access-Token", verifyBody.get("message").textValue());
@@ -64,7 +64,7 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
     void easyDownloadFailed() {
         withAccessToken(TEST_MOBILE, token -> {
             final ResourceRequest request = new ResourceRequest("123456");
-            final JsonNode body = postForEntity(token, "/api/user/easy-download", request, HttpStatus.INTERNAL_SERVER_ERROR);
+            final JsonNode body = postForEntity(token, "/api/user/easy-download", request);
             assertEquals(4, body.size());
             assertEquals(ErrorCodes.RBT_API_FAILED, body.get("code").intValue());
             assertEquals("RBT call failed[301549]", body.get("message").textValue());

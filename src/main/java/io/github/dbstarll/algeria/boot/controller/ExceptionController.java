@@ -40,12 +40,12 @@ final class ExceptionController {
 
     private <E extends Exception, D extends ExceptionData<E>> ResponseEntity<GeneralResponse<D>> response(
             final E e, final D data) {
-        return ResponseEntity.status(data.status(e)).body(GeneralResponse.exception(e, data));
+        return ResponseEntity.ok(GeneralResponse.exception(e, data));
     }
 
     @ExceptionHandler(AlgeriaException.class)
     ResponseEntity<GeneralResponse<Map<String, Serializable>>> algeriaExceptionHandler(final AlgeriaException e) {
         log.error("algeriaException: " + e.getMessage(), e);
-        return ResponseEntity.status(e.status()).body(GeneralResponse.exception(e, AlgeriaException::code, AlgeriaException::data));
+        return ResponseEntity.ok(GeneralResponse.exception(e, AlgeriaException::code, AlgeriaException::data));
     }
 }
