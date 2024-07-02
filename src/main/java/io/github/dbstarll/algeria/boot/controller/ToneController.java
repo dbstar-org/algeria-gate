@@ -41,7 +41,7 @@ class ToneController {
     }
 
     @Operation(summary = "彩铃试听", description = "该接口用于获取试听文件.")
-    @GetMapping("/get")
+    @PostMapping("/get")
     GeneralResponse<byte[]> get(@Valid @RequestBody final UserController.ResourceRequest request)
             throws IOException, ApiException {
         log.debug("get: {}", request);
