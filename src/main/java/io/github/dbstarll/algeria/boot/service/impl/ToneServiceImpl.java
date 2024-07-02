@@ -5,11 +5,13 @@ import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
 import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.utils.net.api.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -34,13 +36,18 @@ class ToneServiceImpl implements ToneService {
         }
     }
 
-    @Override
-    public List<ToneInfo> list() {
+    private List<ToneInfo> list() {
         toneLock.readLock().lock();
         try {
             return new ArrayList<>(tones);
         } finally {
             toneLock.readLock().unlock();
         }
+    }
+
+    @Override
+    public Page<ToneInfo> list(Pageable pageable) {
+        final List<ToneInfo> list = list();
+        return PageableExecutionUtils.getPage(list, pageable, list::size);
     }
 }
