@@ -4,6 +4,8 @@ import io.github.dbstarll.utils.http.client.HttpClientFactory;
 import io.github.dbstarll.utils.lang.wrapper.EntryWrapper;
 import org.apache.hc.client5.http.async.HttpAsyncClient;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.TlsConfig;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -21,6 +23,7 @@ import javax.net.ssl.SSLContext;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 class HttpClientConfig {
@@ -58,8 +61,21 @@ class HttpClientConfig {
         Optional.of(trustAll())
                 .map(e -> new SSLConnectionSocketFactory(e.getKey(), e.getValue()))
                 .map(PoolingHttpClientConnectionManagerBuilder.create()::setSSLSocketFactory)
+                .map(b -> b.setDefaultTlsConfig(tlsConfig()))
+                .map(b -> b.setDefaultConnectionConfig(connectionConfig()))
                 .map(PoolingHttpClientConnectionManagerBuilder::build)
                 .ifPresent(builder::setConnectionManager);
     }
 
+    private TlsConfig tlsConfig() {
+        return TlsConfig.custom().setHandshakeTimeout(TIMEOUT, TimeUnit.MILLISECONDS).build();
+    }
+
+
+    private ConnectionConfig connectionConfig() {
+        return ConnectionConfig.custom()
+                .setConnectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .setSocketTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .build();
+    }
 }
