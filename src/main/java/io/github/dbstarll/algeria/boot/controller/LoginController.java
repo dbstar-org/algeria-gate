@@ -31,7 +31,8 @@ class LoginController {
 
     @Operation(summary = "发送验证码", description = "向指定的手机发送随机验证码")
     @PostMapping("/verify-code")
-    GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request) throws IOException, ApiException {
+    GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request)
+            throws IOException, ApiException {
         log.debug("verifyCode: {}", request);
         userService.verifyCode(request.getPhone());
         return GeneralResponse.ok(true);
@@ -62,7 +63,7 @@ class LoginController {
         private String verifyCode;
 
         @Override
-        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+        protected StringJoiner addToStringEntry(final StringJoiner joiner) {
             return super.addToStringEntry(joiner).add("verifyCode=" + getVerifyCode());
         }
     }
@@ -79,7 +80,7 @@ class LoginController {
         private String phone;
 
         @Override
-        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+        protected StringJoiner addToStringEntry(final StringJoiner joiner) {
             return super.addToStringEntry(joiner).add("phone=" + getPhone());
         }
     }

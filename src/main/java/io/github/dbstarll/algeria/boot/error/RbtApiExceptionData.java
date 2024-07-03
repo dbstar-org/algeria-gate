@@ -21,7 +21,7 @@ public final class RbtApiExceptionData implements ExceptionData<RbtApiException>
     }
 
     @Override
-    public int code(RbtApiException e) {
+    public int code(final RbtApiException e) {
         return ErrorCodes.RBT_API_FAILED;
     }
 }

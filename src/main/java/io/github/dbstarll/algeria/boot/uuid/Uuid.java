@@ -21,6 +21,11 @@ public final class Uuid {
         // 工具类禁止实例化
     }
 
+    /**
+     * 生成一个时间顺序的UUID.
+     *
+     * @return UUID
+     */
     public static UUID generate() {
         return UuidCreator.getTimeOrderedEpochPlus1();
     }

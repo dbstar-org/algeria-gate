@@ -14,9 +14,31 @@ public interface UserService {
      */
     void verifyCode(String phone) throws IOException, ApiException;
 
+    /**
+     * 登录并返回AccessToken.
+     *
+     * @param phone      手机号码
+     * @param verifyCode 手机验证码
+     * @return AccessToken
+     * @throws IOException  in case of a problem or the connection was aborted
+     * @throws ApiException in case of an api error
+     */
     UUID login(String phone, String verifyCode) throws IOException, ApiException;
 
+    /**
+     * 验证AccessToken是否有效并返回session.
+     *
+     * @param token AccessToken
+     * @param renew 是否刷新session有效期
+     * @return SessionTimeData
+     */
     SessionTimeData verify(UUID token, boolean renew);
 
+    /**
+     * 退出登录并返回session.
+     *
+     * @param token AccessToken
+     * @return SessionTimeData
+     */
     SessionTimeData logout(UUID token);
 }

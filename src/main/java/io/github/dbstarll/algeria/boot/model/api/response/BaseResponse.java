@@ -32,7 +32,12 @@ public class BaseResponse extends BaseModel {
     @Schema(description = "eventClassName")
     private String eventClassName;
 
-    public boolean success() {
+    /**
+     * 检查returnCode是否为成功.
+     *
+     * @return 调用是否成功
+     */
+    public final boolean success() {
         return RETURN_CODE_SUCCESS.equals(returnCode);
     }
 

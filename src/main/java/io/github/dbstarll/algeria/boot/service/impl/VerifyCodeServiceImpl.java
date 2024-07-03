@@ -13,6 +13,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 final class VerifyCodeServiceImpl implements VerifyCodeService {
+    private static final int VERIFY_CODE_LENGTH = 6;
+
     private final AlgeriaGateProperties algeriaGateProperties;
     private final SecureRandom secureRandom;
 
@@ -20,6 +22,6 @@ final class VerifyCodeServiceImpl implements VerifyCodeService {
     public String generate() {
         return Optional.ofNullable(algeriaGateProperties.getVerifyCode())
                 .filter(StringUtils::isNotBlank)
-                .orElseGet(() -> RandomStringUtils.random(6, 0, 0, false, true, null, secureRandom));
+                .orElseGet(() -> RandomStringUtils.random(VERIFY_CODE_LENGTH, 0, 0, false, true, null, secureRandom));
     }
 }

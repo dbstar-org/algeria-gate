@@ -17,10 +17,19 @@ public abstract class TimeData extends BaseModel {
         return super.addToStringEntry(joiner).add("time=" + getTime());
     }
 
+    /**
+     * 检查是否过期.
+     *
+     * @param duration 有效期
+     * @return 是否过期
+     */
     public boolean expire(final Duration duration) {
         return System.currentTimeMillis() - time >= duration.toMillis();
     }
 
+    /**
+     * 刷新并延长有效期.
+     */
     public void renew() {
         this.time = System.currentTimeMillis();
     }

@@ -42,22 +42,24 @@ class UserController {
 
     @Operation(summary = "开通并下载铃音", description = "该接口用于通过下载铃音或音乐盒开通RBT业务特性.")
     @PostMapping("/easy-download")
-    GeneralResponse<List<ContentDownloadInfo>> easyDownload(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
-                                                            @Valid @RequestBody final ResourceRequest request)
-            throws IOException, ApiException {
+    GeneralResponse<List<ContentDownloadInfo>> easyDownload(
+            @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
+            @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("easyDownload: {}", request);
         final SessionTimeData session = userService.verify(token, true);
-        return GeneralResponse.ok(rbtApi.user().easyDownload(session.getPhone(), request.getResourceId()).getContentDownloadInfo());
+        return GeneralResponse.ok(rbtApi.user().easyDownload(session.getPhone(),
+                request.getResourceId()).getContentDownloadInfo());
     }
 
     @Operation(summary = "退订铃音", description = "该接口用于用户退订铃音/铃音盒.")
     @PostMapping("/del-inbox-tone")
-    GeneralResponse<String> delInboxTone(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
-                                         @Valid @RequestBody final ResourceRequest request)
-            throws IOException, ApiException {
+    GeneralResponse<String> delInboxTone(
+            @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
+            @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("delInboxTone: {}", request);
         final SessionTimeData session = userService.verify(token, true);
-        return GeneralResponse.ok(rbtApi.user().tone().delInboxTone(session.getPhone(), request.getResourceId()).getResultInfo());
+        return GeneralResponse.ok(rbtApi.user().tone().delInboxTone(session.getPhone(),
+                request.getResourceId()).getResultInfo());
     }
 
     @Getter
@@ -72,7 +74,7 @@ class UserController {
         private String resourceId;
 
         @Override
-        protected StringJoiner addToStringEntry(StringJoiner joiner) {
+        protected StringJoiner addToStringEntry(final StringJoiner joiner) {
             return super.addToStringEntry(joiner).add("resourceId=" + getResourceId());
         }
     }

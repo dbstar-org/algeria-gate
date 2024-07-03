@@ -46,7 +46,7 @@ class ToneServiceImpl implements ToneService {
     }
 
     @Override
-    public Page<ToneInfo> list(Pageable pageable) {
+    public Page<ToneInfo> list(final Pageable pageable) {
         final List<ToneInfo> list = list();
         return PageableExecutionUtils.getPage(list, pageable, list::size);
     }

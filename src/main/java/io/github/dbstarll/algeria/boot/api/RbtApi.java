@@ -38,7 +38,14 @@ public final class RbtApi extends JsonApiClient {
     private final UserManage userManage;
     private final System system;
 
-    public RbtApi(final HttpClient httpClient, ObjectMapper mapper, final RbtApiSettings settings) {
+    /**
+     * 构建RbtApi.
+     *
+     * @param httpClient HttpClient
+     * @param mapper     ObjectMapper
+     * @param settings   RbtApiSettings
+     */
+    public RbtApi(final HttpClient httpClient, final ObjectMapper mapper, final RbtApiSettings settings) {
         super(httpClient, true, optimize(mapper));
         this.settings = settings;
         setUriResolver(new RelativeUriResolver(settings.getUri(), settings.getContext()));
@@ -66,7 +73,7 @@ public final class RbtApi extends JsonApiClient {
     }
 
     @Override
-    protected <T> T postProcessing(ClassicHttpRequest request, T executeResult) throws ApiException {
+    protected <T> T postProcessing(final ClassicHttpRequest request, final T executeResult) throws ApiException {
         final T finalResult = super.postProcessing(request, executeResult);
         final Optional<RbtApiException> optException = Optional.ofNullable(finalResult)
                 .filter(ObjectNode.class::isInstance).map(ObjectNode.class::cast)
@@ -116,6 +123,14 @@ public final class RbtApi extends JsonApiClient {
     public class ToneProvide {
         private final String moduleRoot;
 
+        /**
+         * 本接口用于CP操作员在Web Portal上查询指定铃音目录下的以下资源类型：彩铃、音乐盒.
+         *
+         * @param status Tone state
+         * @return QueryCatalogToneResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public QueryCatalogToneResponse query(final String status) throws IOException, ApiException {
             return execute(post(moduleRoot + "/querycatalogtone")
                     .setEntity(auth(new QueryCatalogToneRequest(), request -> {
@@ -174,7 +189,8 @@ public final class RbtApi extends JsonApiClient {
                     })).build(), SubscribeProductResponse.class);
         }
 
-        public EasyDownloadResponse easyDownload(final String phone, final String resourceID) throws IOException, ApiException {
+        public EasyDownloadResponse easyDownload(final String phone, final String resourceID)
+                throws IOException, ApiException {
             return execute(post(moduleRoot + "/easydownload")
                     .setEntity(authUpdate(new EasyDownloadRequest(), request -> {
                         request.setPhoneNumber(phone);
@@ -224,7 +240,7 @@ public final class RbtApi extends JsonApiClient {
 
         private final String returnCode;
 
-        public RbtApiException(String returnCode) {
+        private RbtApiException(final String returnCode) {
             super(String.format("RBT call failed[%s]", returnCode), null);
             this.returnCode = returnCode;
         }

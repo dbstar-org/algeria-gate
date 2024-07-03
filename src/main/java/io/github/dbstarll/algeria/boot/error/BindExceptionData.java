@@ -26,7 +26,7 @@ public final class BindExceptionData implements ExceptionData<BindException> {
     }
 
     @Override
-    public int code(BindException e) {
+    public int code(final BindException e) {
         return ErrorCodes.VALIDATION_FAILED;
     }
 

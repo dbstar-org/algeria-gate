@@ -62,7 +62,7 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SessionTimeData verify(UUID token, boolean renew) {
+    public SessionTimeData verify(final UUID token, final boolean renew) {
         return sessions.compute(token, (k, v) -> {
             if (v == null || v.expire(SESSION_DURATION)) {
                 throw new InvalidAccessTokenException("Invalid Access-Token");
@@ -76,7 +76,7 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SessionTimeData logout(UUID token) {
+    public SessionTimeData logout(final UUID token) {
         return sessions.remove(token);
     }
 }

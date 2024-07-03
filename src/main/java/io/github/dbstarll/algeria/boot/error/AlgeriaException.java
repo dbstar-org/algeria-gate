@@ -13,11 +13,11 @@ public abstract class AlgeriaException extends NestedRuntimeException {
 
     private final Map<String, Serializable> data = new HashMap<>();
 
-    protected AlgeriaException(String msg) {
+    protected AlgeriaException(final String msg) {
         super(msg);
     }
 
-    protected AlgeriaException(String msg, Throwable cause) {
+    protected AlgeriaException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 
