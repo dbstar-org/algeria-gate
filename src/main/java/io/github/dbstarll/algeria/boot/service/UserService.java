@@ -35,6 +35,16 @@ public interface UserService {
     SessionTimeData verify(UUID token, boolean renew);
 
     /**
+     * 更新session中的用户信息.
+     *
+     * @param token AccessToken
+     * @return SessionTimeData
+     * @throws IOException  in case of a problem or the connection was aborted
+     * @throws ApiException in case of an api error
+     */
+    SessionTimeData update(UUID token) throws IOException, ApiException;
+
+    /**
      * 退出登录并返回session.
      *
      * @param token AccessToken

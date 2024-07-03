@@ -47,15 +47,28 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             final JsonNode body = postForEntity(token, "/api/user/easy-download", request);
             assertEquals(2, body.size());
             assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-            assertEquals(1, body.get("data").size());
-            assertEquals(7, body.at("/data/0").size());
-            assertEquals("1", body.at("/data/0/resourceType").textValue());
-            assertEquals(TEST_TONE_ID, body.at("/data/0/resourceId").textValue());
-            assertEquals("601520000000000016", body.at("/data/0/resourceCode").textValue());
-            assertEquals("5000", body.at("/data/0/chargedPrice").textValue());
-            assertEquals("60", body.at("/data/0/duration").textValue());
-            assertTrue(body.at("/data/0/chargeTime").isTextual());
-            assertTrue(body.at("/data/0/relativeExpiryDate").isTextual());
+            assertEquals(2, body.get("data").size());
+
+            assertEquals(4, body.at("/data/session").size());
+            assertTrue(body.at("/data/session/time").isLong());
+            assertEquals(TEST_MOBILE, body.at("/data/session/phone").textValue());
+            assertEquals(1, body.at("/data/session/users").size());
+            assertEquals(26, body.at("/data/session/users/0").size());
+            assertEquals(1, body.at("/data/session/users/0/serviceOrders").size());
+            assertEquals(18, body.at("/data/session/users/0/serviceOrders/0").size());
+            assertEquals(1, body.at("/data/session/tones").size());
+            assertEquals(49, body.at("/data/session/tones/0").size());
+            assertEquals(TEST_TONE_ID, body.at("/data/session/tones/0/toneID").textValue());
+
+            assertEquals(1, body.at("/data/contents").size());
+            assertEquals(7, body.at("/data/contents/0").size());
+            assertEquals("1", body.at("/data/contents/0/resourceType").textValue());
+            assertEquals(TEST_TONE_ID, body.at("/data/contents/0/resourceId").textValue());
+            assertEquals("601520000000000016", body.at("/data/contents/0/resourceCode").textValue());
+            assertEquals("5000", body.at("/data/contents/0/chargedPrice").textValue());
+            assertEquals("60", body.at("/data/contents/0/duration").textValue());
+            assertTrue(body.at("/data/contents/0/chargeTime").isTextual());
+            assertTrue(body.at("/data/contents/0/relativeExpiryDate").isTextual());
         });
     }
 
@@ -80,7 +93,17 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             final JsonNode body = postForEntity(token, "/api/user/del-inbox-tone", request);
             assertEquals(2, body.size());
             assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-            assertEquals("1#13229395", body.get("data").textValue());
+
+            assertEquals(4, body.at("/data/session").size());
+            assertTrue(body.at("/data/session/time").isLong());
+            assertEquals(TEST_MOBILE, body.at("/data/session/phone").textValue());
+            assertEquals(1, body.at("/data/session/users").size());
+            assertEquals(26, body.at("/data/session/users/0").size());
+            assertEquals(1, body.at("/data/session/users/0/serviceOrders").size());
+            assertEquals(18, body.at("/data/session/users/0/serviceOrders/0").size());
+            assertEquals(0, body.at("/data/session/tones").size());
+
+            assertEquals("1#13229395", body.at("/data/resultInfo").textValue());
         });
     }
 }

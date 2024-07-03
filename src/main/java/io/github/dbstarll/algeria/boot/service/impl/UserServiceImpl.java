@@ -76,6 +76,18 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
+    public SessionTimeData update(final UUID token) throws IOException, ApiException {
+        final String phone = verify(token, false).getPhone();
+        final SessionTimeData session = new SessionTimeData(phone,
+                rbtApi.user().queryUser(phone).getUserInfos(),
+                rbtApi.user().queryUserProduct(phone).getUserProductInfos(),
+                rbtApi.user().tone().queryInboxTone(phone).getToneInfos()
+        );
+        sessions.put(token, session);
+        return session;
+    }
+
+    @Override
     public SessionTimeData logout(final UUID token) {
         return sessions.remove(token);
     }
