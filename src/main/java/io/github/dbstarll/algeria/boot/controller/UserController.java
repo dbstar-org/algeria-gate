@@ -1,6 +1,7 @@
 package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.api.RbtApi;
+import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.api.response.user.ContentDownloadInfo;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
@@ -34,14 +35,14 @@ class UserController {
 
     @Operation(summary = "验证token", description = "检查token是否有效，并返回用户信息.")
     @GetMapping("/verify")
-    GeneralResponse<SessionTimeData> verify(@RequestHeader("gate-access-token") final UUID token) {
+    GeneralResponse<SessionTimeData> verify(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
         log.debug("verify: {}", Uuid.toString(token));
         return GeneralResponse.ok(userService.verify(token, false));
     }
 
     @Operation(summary = "开通并下载铃音", description = "该接口用于通过下载铃音或音乐盒开通RBT业务特性.")
     @PostMapping("/easy-download")
-    GeneralResponse<List<ContentDownloadInfo>> easyDownload(@RequestHeader("gate-access-token") final UUID token,
+    GeneralResponse<List<ContentDownloadInfo>> easyDownload(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
                                                             @Valid @RequestBody final ResourceRequest request)
             throws IOException, ApiException {
         log.debug("easyDownload: {}", request);
@@ -51,7 +52,7 @@ class UserController {
 
     @Operation(summary = "退订铃音", description = "该接口用于用户退订铃音/铃音盒.")
     @PostMapping("/del-inbox-tone")
-    GeneralResponse<String> delInboxTone(@RequestHeader("gate-access-token") final UUID token,
+    GeneralResponse<String> delInboxTone(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
                                          @Valid @RequestBody final ResourceRequest request)
             throws IOException, ApiException {
         log.debug("delInboxTone: {}", request);

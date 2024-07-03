@@ -12,7 +12,6 @@ public abstract class BaseQueryRequest extends BaseRequest {
     public static final String DEFAULT_START_RECORD_NUM = "1";
     public static final String DEFAULT_END_RECORD_NUM = "50";
     public static final String DEFAULT_QUERY_TYPE = "2";
-
     @Schema(description = "开始记录标识符")
     private String startRecordNum = DEFAULT_START_RECORD_NUM;
 

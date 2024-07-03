@@ -1,5 +1,6 @@
 package io.github.dbstarll.algeria.boot.controller;
 
+import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
@@ -45,7 +46,7 @@ class LoginController {
 
     @Operation(summary = "退出登录", description = "退出当前登录并使token失效.")
     @GetMapping("/logout")
-    GeneralResponse<SessionTimeData> logout(@RequestHeader("gate-access-token") final UUID token) {
+    GeneralResponse<SessionTimeData> logout(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
         log.debug("logout: {}", Uuid.toString(token));
         userService.verify(token, false);
         return GeneralResponse.ok(userService.logout(token));

@@ -2,6 +2,7 @@ package io.github.dbstarll.algeria.boot;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dbstarll.algeria.boot.error.ErrorCodes;
+import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -63,7 +64,7 @@ public abstract class AbstractBaseSpringBootTest {
 
     protected final <R, T> T postForEntity(final String accessToken, final String url, final R request, final Class<T> responseType) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.set("gate-access-token", accessToken);
+        headers.set(AccessTokenHolder.HEADER_ACCESS_TOKEN, accessToken);
         final ResponseEntity<T> res = restTemplate.postForEntity(url, new HttpEntity<>(request, headers), responseType);
         assertEquals(HttpStatus.OK, res.getStatusCode());
         final T body = res.getBody();
@@ -77,7 +78,7 @@ public abstract class AbstractBaseSpringBootTest {
 
     protected final <T> T getForEntity(final String accessToken, final String url, final Class<T> responseType) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.set("gate-access-token", accessToken);
+        headers.set(AccessTokenHolder.HEADER_ACCESS_TOKEN, accessToken);
         final ResponseEntity<T> res = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), responseType);
         assertEquals(HttpStatus.OK, res.getStatusCode());
         final T body = res.getBody();

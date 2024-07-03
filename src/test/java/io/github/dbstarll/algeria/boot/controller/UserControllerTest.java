@@ -6,7 +6,6 @@ import io.github.dbstarll.algeria.boot.error.ErrorCodes;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 
 import static io.github.dbstarll.algeria.boot.controller.UserController.ResourceRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
