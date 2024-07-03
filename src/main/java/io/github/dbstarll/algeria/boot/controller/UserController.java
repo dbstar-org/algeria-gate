@@ -44,24 +44,26 @@ class UserController {
 
     @Operation(summary = "开通并下载铃音", description = "该接口用于通过下载铃音或音乐盒开通RBT业务特性.")
     @PostMapping("/easy-download")
-    GeneralResponse<DownloadResponse> easyDownload(
+    GeneralResponse<List<ContentDownloadInfo>> easyDownload(
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
             @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("easyDownload: {}", request);
         final SessionTimeData session = userService.verify(token, true);
         final EasyDownloadResponse response = rbtApi.user().easyDownload(session.getPhone(), request.getResourceId());
-        return GeneralResponse.ok(new DownloadResponse(userService.update(token), response.getContentDownloadInfo()));
+        userService.update(token);
+        return GeneralResponse.ok(response.getContentDownloadInfo());
     }
 
     @Operation(summary = "退订铃音", description = "该接口用于用户退订铃音/铃音盒.")
     @PostMapping("/del-inbox-tone")
-    GeneralResponse<DelInboxToneResponse> delInboxTone(
+    GeneralResponse<String> delInboxTone(
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
             @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("delInboxTone: {}", request);
         final SessionTimeData session = userService.verify(token, true);
         final BaseResponse response = rbtApi.user().tone().delInboxTone(session.getPhone(), request.getResourceId());
-        return GeneralResponse.ok(new DelInboxToneResponse(userService.update(token), response.getResultInfo()));
+        userService.update(token);
+        return GeneralResponse.ok(response.getResultInfo());
     }
 
     @Getter
@@ -79,26 +81,5 @@ class UserController {
         protected StringJoiner addToStringEntry(final StringJoiner joiner) {
             return super.addToStringEntry(joiner).add("resourceId=" + getResourceId());
         }
-    }
-
-    @Getter
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class DownloadResponse extends BaseModel {
-        private static final long serialVersionUID = 2785639764536473530L;
-        @Schema(description = "用户会话信息")
-        private final SessionTimeData session;
-
-        @Schema(description = "内容计费信息")
-        private final List<ContentDownloadInfo> contents;
-    }
-
-    @Getter
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class DelInboxToneResponse extends BaseModel {
-        private static final long serialVersionUID = 2785639764536473530L;
-        @Schema(description = "用户会话信息")
-        private final SessionTimeData session;
-        @Schema(description = "结果信息")
-        private final String resultInfo;
     }
 }
