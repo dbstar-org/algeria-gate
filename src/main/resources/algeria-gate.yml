@@ -38,6 +38,7 @@ algeria-gate:
     cors:
       allowed-origins:
         - http://gate.leduo.cn
+        - http://gate-api.leduo.cn
   api:
     rbt:
       uri: https://116.63.194.38:17132/apiaccess/gw/rest
