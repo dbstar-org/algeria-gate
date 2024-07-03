@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
 
 @Component
 @ConfigurationProperties(prefix = "algeria-gate")
@@ -15,6 +16,11 @@ public final class AlgeriaGateProperties implements InitializingBean {
      * 外部API相关配置项.
      */
     private final ApiSettings api = new ApiSettings();
+
+    /**
+     * Web配置项.
+     */
+    private final WebSettings web = new WebSettings();
 
     @Setter
     private String verifyCode;
@@ -31,6 +37,34 @@ public final class AlgeriaGateProperties implements InitializingBean {
         @Override
         public void afterPropertiesSet() {
             rbt.afterPropertiesSet();
+        }
+    }
+
+
+    @Getter
+    public static final class WebSettings {
+        /**
+         * CORS配置项.
+         */
+        private final CorsSettings cors = new CorsSettings();
+
+        @Setter
+        public static final class CorsSettings {
+            /**
+             * the origins for which cross-origin requests are allowed from a browser.
+             */
+            private String[] allowedOrigins;
+
+            /**
+             * 定制CorsRegistration.
+             *
+             * @param cors CorsRegistration
+             */
+            public void customize(final CorsRegistration cors) {
+                if (allowedOrigins != null) {
+                    cors.allowedOrigins(allowedOrigins);
+                }
+            }
         }
     }
 }
