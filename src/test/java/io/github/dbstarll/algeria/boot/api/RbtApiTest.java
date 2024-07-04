@@ -32,7 +32,7 @@ class RbtApiTest {
         assertEquals("-1", body.get("recordSum").textValue());
         assertEquals("0", body.get("operationID").textValue());
         assertEquals("0", body.get("resultCode").textValue());
-        assertEquals(1, body.get("toneInfos").size());
+        assertEquals(10, body.get("toneInfos").size());
         assertEquals(35, body.at("/toneInfos/0").size());
         assertEquals(TEST_TONE_ID, body.at("/toneInfos/0/toneID").textValue());
         assertTrue(body.at("/toneInfos/0/singerInfos").isMissingNode());

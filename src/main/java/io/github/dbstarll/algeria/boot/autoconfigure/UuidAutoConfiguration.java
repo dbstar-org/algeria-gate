@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import io.github.dbstarll.algeria.boot.uuid.StringToUuidConverter;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
+import io.github.dbstarll.algeria.boot.uuid.UuidGenerator;
+import org.hibernate.id.IdentifierGenerator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,6 +25,13 @@ import java.util.UUID;
  */
 @AutoConfiguration
 class UuidAutoConfiguration {
+    @Bean
+    @ConditionalOnClass(IdentifierGenerator.class)
+    @ConditionalOnMissingBean(UuidGenerator.class)
+    UuidGenerator uuidGenerator() {
+        return new UuidGenerator();
+    }
+
     @Bean
     @ConditionalOnClass(Converter.class)
     @ConditionalOnMissingBean(StringToUuidConverter.class)

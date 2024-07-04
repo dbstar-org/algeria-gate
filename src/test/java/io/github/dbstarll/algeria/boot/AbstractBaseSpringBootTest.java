@@ -3,15 +3,21 @@ package io.github.dbstarll.algeria.boot;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dbstarll.algeria.boot.error.ErrorCodes;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +28,8 @@ public abstract class AbstractBaseSpringBootTest {
 
     @Autowired
     protected TestRestTemplate restTemplate;
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     protected void setUpRestTemplate() {
@@ -32,6 +40,20 @@ public abstract class AbstractBaseSpringBootTest {
         final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setOutputStreaming(false);
         restTemplate.getRestTemplate().setRequestFactory(requestFactory);
+    }
+
+    @AfterEach
+    void cleanDatabase() throws SQLException {
+        try (Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
+            try (ResultSet tables = connection.getMetaData().getTables(null, "PUBLIC", null, new String[]{"TABLE"})) {
+                while (tables.next()) {
+                    final String tableName = tables.getString("TABLE_NAME");
+                    if (tableName.startsWith("AG_")) {
+                        jdbcTemplate.update("DELETE FROM " + tableName);
+                    }
+                }
+            }
+        }
     }
 
     protected final void withAccessToken(final String phone, final Consumer<String> consumer) {

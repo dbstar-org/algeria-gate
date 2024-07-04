@@ -14,6 +14,10 @@ import java.util.UUID;
  * @author dbstar
  */
 public final class Uuid {
+    public static final int LENGTH_OF_UUID_KEY = 22;
+    public static final String TYPE = UuidStringType.NAME;
+    public static final String GENERATOR = "io.github.dbstarll.algeria.boot.uuid.UuidGenerator";
+
     public static final int AGE_INVALID_UUID = -2;
     public static final int AGE_ILLEGAL_ARGUMENT = -3;
 
