@@ -16,4 +16,10 @@ class RedisConfig {
     ValueOperations<Object, Object> valueOperations(final RedisTemplate<Object, Object> redisTemplate) {
         return redisTemplate.opsForValue();
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    ValueOperations<String, String> stringValueOperations(final RedisTemplate<String, String> redisTemplate) {
+        return redisTemplate.opsForValue();
+    }
 }
