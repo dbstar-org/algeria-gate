@@ -25,7 +25,8 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
         assertNotNull(body);
         assertEquals(2, body.size());
         assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-        assertTrue(body.get("data").booleanValue());
+        assertEquals(1, body.get("data").size());
+        assertEquals(60, body.at("/data/wait").intValue());
 
         final ResponseEntity<JsonNode> res2 = restTemplate.postForEntity("/api/login/verify-code", request, JsonNode.class);
         assertEquals(HttpStatus.OK, res2.getStatusCode());
@@ -40,7 +41,7 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
     }
 
     @Test
-    void loginPhone() {
+    void login() {
         final PhoneRequest request = new PhoneRequest(TEST_MOBILE);
         final ResponseEntity<JsonNode> res = restTemplate.postForEntity("/api/login/verify-code", request, JsonNode.class);
         assertEquals(HttpStatus.OK, res.getStatusCode());
@@ -48,7 +49,8 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
         assertNotNull(body);
         assertEquals(2, body.size());
         assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-        assertTrue(body.get("data").booleanValue());
+        assertEquals(1, body.get("data").size());
+        assertEquals(60, body.at("/data/wait").intValue());
 
         final LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPhone(TEST_MOBILE);

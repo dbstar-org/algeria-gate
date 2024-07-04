@@ -76,7 +76,8 @@ public abstract class AbstractBaseSpringBootTest {
         assertNotNull(body);
         assertEquals(2, body.size());
         assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-        assertTrue(body.get("data").booleanValue());
+        assertEquals(1, body.get("data").size());
+        assertEquals(60, body.at("/data/wait").intValue());
 
         final Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("phone", phone);

@@ -18,7 +18,6 @@ class RedisConfig {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     ValueOperations<String, String> stringValueOperations(final RedisTemplate<String, String> redisTemplate) {
         return redisTemplate.opsForValue();
     }

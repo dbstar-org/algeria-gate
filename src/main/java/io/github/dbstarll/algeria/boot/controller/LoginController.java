@@ -1,5 +1,6 @@
 package io.github.dbstarll.algeria.boot.controller;
 
+import io.github.dbstarll.algeria.boot.error.InvalidVerifyCodeException;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -31,18 +34,21 @@ class LoginController {
 
     @Operation(summary = "发送验证码", description = "向指定的手机发送随机验证码")
     @PostMapping("/verify-code")
-    GeneralResponse<Boolean> verifyCode(@Valid @RequestBody final PhoneRequest request)
+    GeneralResponse<Map<String, Long>> verifyCode(@Valid @RequestBody final PhoneRequest request)
             throws IOException, ApiException {
         log.debug("verifyCode: {}", request);
-        userService.verifyCode(request.getPhone());
-        return GeneralResponse.ok(true);
+        return GeneralResponse.ok(Collections.singletonMap("wait", userService.obtainVerifyCode(request.getPhone())));
     }
 
     @Operation(summary = "手机+验证码登录", description = "手机+验证码登录并获得token.")
     @PostMapping("/phone")
-    GeneralResponse<UUID> loginPhone(@Valid @RequestBody final LoginRequest request) throws IOException, ApiException {
-        log.debug("loginPhone: {}", request);
-        return GeneralResponse.ok(userService.login(request.getPhone(), request.getVerifyCode()));
+    GeneralResponse<UUID> login(@Valid @RequestBody final LoginRequest request) throws IOException, ApiException {
+        log.debug("login: {}", request);
+        if (!userService.verification(request.getPhone(), request.getVerifyCode()).isPresent()) {
+            throw new InvalidVerifyCodeException("验证码错误");
+        } else {
+            return GeneralResponse.ok(userService.login(request.getPhone()));
+        }
     }
 
     @Operation(summary = "退出登录", description = "退出当前登录并使token失效.")
