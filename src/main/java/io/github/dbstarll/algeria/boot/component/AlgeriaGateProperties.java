@@ -40,7 +40,6 @@ public final class AlgeriaGateProperties implements InitializingBean {
         }
     }
 
-
     @Getter
     public static final class WebSettings {
         /**

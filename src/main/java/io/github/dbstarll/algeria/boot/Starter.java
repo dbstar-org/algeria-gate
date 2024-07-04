@@ -2,8 +2,10 @@ package io.github.dbstarll.algeria.boot;
 
 import io.github.dbstarll.utils.spring.boot.BootLauncher;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing(modifyOnCreate = false)
 public class Starter extends BootLauncher {
     /**
      * 启动类.
