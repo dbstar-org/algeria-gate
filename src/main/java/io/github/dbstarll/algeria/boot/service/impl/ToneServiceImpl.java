@@ -48,6 +48,8 @@ class ToneServiceImpl implements ToneService {
     @Override
     public Page<ToneInfo> list(final Pageable pageable) {
         final List<ToneInfo> list = list();
-        return PageableExecutionUtils.getPage(list, pageable, list::size);
+        final int fromIndex = Math.min(list.size(), (int) pageable.getOffset());
+        final int toIndex = Math.min(list.size(), fromIndex + pageable.getPageSize());
+        return PageableExecutionUtils.getPage(list.subList(fromIndex, toIndex), pageable, list::size);
     }
 }
