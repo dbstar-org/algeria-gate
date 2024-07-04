@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,6 +32,8 @@ public abstract class AbstractBaseSpringBootTest {
     protected TestRestTemplate restTemplate;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+    @Autowired
+    protected RedisTemplate<String, String> redisTemplate;
 
     @BeforeEach
     protected void setUpRestTemplate() {
@@ -54,6 +58,14 @@ public abstract class AbstractBaseSpringBootTest {
                 }
             }
         }
+    }
+
+    @AfterEach
+    void cleanRedis() {
+        redisTemplate.execute((RedisCallback<String>) connection -> {
+            connection.flushAll();
+            return null;
+        });
     }
 
     protected final void withAccessToken(final String phone, final Consumer<String> consumer) {

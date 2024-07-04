@@ -34,6 +34,7 @@
     <version.spring-boot>2.7.18</version.spring-boot>
     <version.knife4j-openapi3-spring-boot>4.5.0</version.knife4j-openapi3-spring-boot>
     <version.mysql-connector>8.0.33</version.mysql-connector>
+    <version.jedis>3.10.0</version.jedis>
   </properties>
 
   <dependencies>
@@ -85,6 +86,17 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
       <version>${version.spring-boot}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.lettuce</groupId>
+          <artifactId>lettuce-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>${version.jedis}</version>
     </dependency>
     <!-- openapi3 -->
     <dependency>
