@@ -51,7 +51,7 @@ public final class Game extends BaseUuidIdentifyEntity {
 
     @Comment("游戏截图")
     @Type(type = Json.TYPE)
-    @Column(nullable = false, updatable = false, columnDefinition = "json")
+    @Column(nullable = false, updatable = false)
     private List<String> screenshots;
 
     @Comment("是否VIP游戏")
