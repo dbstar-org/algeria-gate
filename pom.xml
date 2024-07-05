@@ -35,6 +35,8 @@
     <version.knife4j-openapi3-spring-boot>4.5.0</version.knife4j-openapi3-spring-boot>
     <version.mysql-connector>8.0.33</version.mysql-connector>
     <version.jedis>3.10.0</version.jedis>
+    <version.hibernate-types>2.21.1</version.hibernate-types>
+    <version.commons-text>1.11.0</version.commons-text>
   </properties>
 
   <dependencies>
@@ -109,6 +111,17 @@
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
       <version>${version.mysql-connector}</version>
+    </dependency>
+    <!-- hibernate -->
+    <dependency>
+      <groupId>com.vladmihalcea</groupId>
+      <artifactId>hibernate-types-55</artifactId>
+      <version>${version.hibernate-types}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${version.commons-text}</version>
     </dependency>
   </dependencies>
 
