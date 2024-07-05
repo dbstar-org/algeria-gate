@@ -56,11 +56,6 @@ algeria-gate:
     rbt:
       uri: https://116.63.194.38:17132/apiaccess/gw/rest
       context: /apiaccess/gw/rest
-      portal-account: admin
-      portal-pwd: IVAS@Huawei_1234
-      portal-type: 71
-      role: 3
-      role-code: admin
       tone:
         catalog-id: 400960
       user:
