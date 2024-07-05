@@ -40,6 +40,10 @@ spring:
     redis:
       repositories:
         enabled: false
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 algeria-gate:
   version: ${git.commit.id.describe}
