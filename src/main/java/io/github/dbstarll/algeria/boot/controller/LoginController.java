@@ -5,6 +5,7 @@ import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
+import io.github.dbstarll.algeria.boot.service.PhoneService;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -30,6 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 class LoginController {
+    private final PhoneService phoneService;
     private final UserService userService;
 
     @Operation(summary = "发送验证码", description = "向指定的手机发送随机验证码")
@@ -37,14 +39,14 @@ class LoginController {
     GeneralResponse<Map<String, Long>> verifyCode(@Valid @RequestBody final PhoneRequest request)
             throws IOException, ApiException {
         log.debug("verifyCode: {}", request);
-        return GeneralResponse.ok(Collections.singletonMap("wait", userService.obtainVerifyCode(request.getPhone())));
+        return GeneralResponse.ok(Collections.singletonMap("wait", phoneService.obtainVerifyCode(request.getPhone())));
     }
 
     @Operation(summary = "手机+验证码登录", description = "手机+验证码登录并获得token.")
     @PostMapping("/phone")
     GeneralResponse<UUID> login(@Valid @RequestBody final LoginRequest request) throws IOException, ApiException {
         log.debug("login: {}", request);
-        if (!userService.verification(request.getPhone(), request.getVerifyCode()).isPresent()) {
+        if (!phoneService.verification(request.getPhone(), request.getVerifyCode()).isPresent()) {
             throw new InvalidVerifyCodeException("验证码错误");
         } else {
             return GeneralResponse.ok(userService.login(request.getPhone()));
