@@ -6,7 +6,9 @@ import io.github.dbstarll.algeria.boot.jpa.entity.Game;
 import io.github.dbstarll.algeria.boot.jpa.repository.GameRepository;
 import io.github.dbstarll.algeria.boot.service.GameService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
+import io.github.dbstarll.utils.lang.wrapper.EntryWrapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
@@ -24,17 +26,19 @@ import java.util.zip.ZipFile;
 @RequiredArgsConstructor
 class GameServiceImpl implements GameService {
     private static final String ENTRY_DETAIL_JSON = "detail.json";
+    private static final String ROOT_IMAGE = "images";
 
     private final ObjectMapper mapper;
     private final GameRepository gameRepository;
     private final AlgeriaGateProperties algeriaGateProperties;
 
     @Override
-    public Game create(final ZipFile zipFile) throws IOException {
+    public Map.Entry<Game, File> create(final ZipFile zipFile) throws IOException {
         final Map<String, ZipEntry> entries = zipFile.stream().filter(Predicates.negate(ZipEntry::isDirectory))
                 .filter(e -> !e.getName().startsWith("__MACOSX"))
                 .collect(Collectors.toMap(e -> StringUtils.substringAfterLast(e.getName(), "/"), e -> e));
-        return gameRepository.save(verify(parseFromDetail(zipFile, entries), entries));
+        final Game game = gameRepository.save(verify(parseFromDetail(zipFile, entries), entries));
+        return EntryWrapper.wrap(game, save(game, zipFile, entries));
     }
 
     @Override
@@ -54,13 +58,35 @@ class GameServiceImpl implements GameService {
         game.setSize(verifyEntry(entries, game.getBin(), "安装包").getSize());
         verifyEntry(entries, game.getIconBig(), "大图标");
         verifyEntry(entries, game.getIconSmall(), "小图标");
-        Optional.ofNullable(game.getScreenshots()).ifPresent(screenshots ->
-                screenshots.forEach(s -> verifyEntry(entries, s, "游戏截图")));
+        Optional.ofNullable(game.getScreenshots())
+                .orElseThrow(() -> new UnsupportedOperationException("游戏截图 not found"))
+                .forEach(s -> verifyEntry(entries, s, "游戏截图"));
         return game;
     }
 
     private ZipEntry verifyEntry(final Map<String, ZipEntry> entries, final String item, final String title) {
         return Optional.ofNullable(entries.get(item)).filter(e -> e.getSize() > 0)
                 .orElseThrow(() -> new UnsupportedOperationException(title + " not found: " + item));
+    }
+
+    private File save(final Game game, final ZipFile zipFile, final Map<String, ZipEntry> entries) throws IOException {
+        final File gameRoot = new File(algeriaGateProperties.getGameRoot(), Uuid.toString(game.getId()));
+        final File imageRoot = new File(gameRoot, ROOT_IMAGE);
+        if (imageRoot.mkdirs()) {
+            save(gameRoot, zipFile, entries, game.getBin());
+            save(imageRoot, zipFile, entries, game.getIconBig());
+            save(imageRoot, zipFile, entries, game.getIconSmall());
+            for (String screenshot : game.getScreenshots()) {
+                save(imageRoot, zipFile, entries, screenshot);
+            }
+        }
+        return gameRoot;
+    }
+
+    private void save(final File gameRoot, final ZipFile zipFile, final Map<String, ZipEntry> entries,
+                      final String item) throws IOException {
+        try (InputStream in = zipFile.getInputStream(entries.get(item))) {
+            FileUtils.copyToFile(in, new File(gameRoot, item));
+        }
     }
 }

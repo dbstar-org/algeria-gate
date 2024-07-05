@@ -4,6 +4,7 @@ import io.github.dbstarll.algeria.boot.jpa.entity.Game;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 public interface GameService {
@@ -13,7 +14,7 @@ public interface GameService {
      * @param zipFile zip压缩文件
      * @return 新建的游戏.
      */
-    Game create(ZipFile zipFile) throws IOException;
+    Map.Entry<Game, File> create(ZipFile zipFile) throws IOException;
 
     /**
      * 获得游戏介质文件.

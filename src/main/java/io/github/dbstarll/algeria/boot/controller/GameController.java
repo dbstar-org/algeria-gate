@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +55,9 @@ class GameController {
         final File tmpFile = File.createTempFile("upload-game-", ".zip");
         try {
             file.transferTo(tmpFile);
-            return GeneralResponse.ok(create(tmpFile));
+            try (ZipFile zipFile = new ZipFile(tmpFile)) {
+                return GeneralResponse.ok(gameService.create(zipFile).getKey());
+            }
         } finally {
             Files.delete(tmpFile.toPath());
         }
@@ -67,14 +68,6 @@ class GameController {
                 .filter(admins -> admins.contains(session.getPhone()))
                 .isPresent()) {
             throw new InvalidAccessTokenException("未授权");
-        }
-    }
-
-    private Game create(final File tmpFile) throws IOException {
-        try (ZipFile zipFile = new ZipFile(tmpFile)) {
-            final Game game = gameService.create(zipFile);
-            FileUtils.copyFile(tmpFile, gameService.file(game));
-            return game;
         }
     }
 
