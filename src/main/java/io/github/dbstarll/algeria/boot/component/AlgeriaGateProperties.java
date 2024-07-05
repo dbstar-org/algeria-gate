@@ -8,6 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 
+import static org.apache.commons.lang3.Validate.notBlank;
+
 @Component
 @ConfigurationProperties(prefix = "algeria-gate")
 @Getter
@@ -25,9 +27,13 @@ public final class AlgeriaGateProperties implements InitializingBean {
     @Setter
     private String verifyCode;
 
+    @Setter
+    private String gameRoot;
+
     @Override
     public void afterPropertiesSet() {
         api.afterPropertiesSet();
+        notBlank(gameRoot, "game-root not set");
     }
 
     @Getter
