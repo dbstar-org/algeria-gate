@@ -3,14 +3,19 @@ package io.github.dbstarll.algeria.boot.controller;
 import io.github.dbstarll.algeria.boot.component.AlgeriaGateProperties;
 import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
 import io.github.dbstarll.algeria.boot.jpa.entity.Game;
+import io.github.dbstarll.algeria.boot.jpa.repository.GameRepository;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
+import io.github.dbstarll.algeria.boot.model.response.BasePageableRequest;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
+import io.github.dbstarll.algeria.boot.model.response.PageableResponse;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.GameService;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.http.MediaType;
@@ -18,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,6 +40,7 @@ class GameController {
     private final UserService userService;
     private final GameService gameService;
     private final AlgeriaGateProperties algeriaGateProperties;
+    private final GameRepository gameRepository;
 
     @Operation(summary = "上传游戏", description = "运营商上传游戏到平台.")
     @PostMapping("/upload")
@@ -69,5 +76,20 @@ class GameController {
             FileUtils.copyFile(tmpFile, gameService.file(game));
             return game;
         }
+    }
+
+    @Operation(summary = "获得游戏列表", description = "分页查询游戏列表.")
+    @PostMapping("/list")
+    GeneralResponse<PageableResponse<Game>> list(@Valid @RequestBody final GamePageableRequest request) {
+        log.debug("list: {}", request);
+        return GeneralResponse.ok(PageableResponse.of(gameRepository.findAllByVip(request.vip, request.toPageable())));
+    }
+
+    @Setter
+    public static final class GamePageableRequest extends BasePageableRequest<GamePageableRequest> {
+        private static final long serialVersionUID = -3352945452791685812L;
+
+        @Schema(description = "是否VIP游戏")
+        private boolean vip;
     }
 }
