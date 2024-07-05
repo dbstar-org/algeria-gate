@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +31,8 @@ class GameController {
 
     @Operation(summary = "上传游戏", description = "运营商上传游戏到平台.")
     @PostMapping("/upload")
-    GeneralResponse<Game> upload(@RequestParam("file") final MultipartFile file) throws IOException {
+    @Transactional
+    public GeneralResponse<Game> upload(@RequestParam("file") final MultipartFile file) throws IOException {
         log.debug("upload name: {}, type: {}, size: {}", file.getOriginalFilename(), file.getContentType(),
                 file.getSize());
         if (!"application/zip".equalsIgnoreCase(file.getContentType())) {
@@ -38,11 +41,17 @@ class GameController {
         final File tmpFile = File.createTempFile("upload-game-", ".zip");
         try {
             file.transferTo(tmpFile);
-            try (ZipFile zipFile = new ZipFile(tmpFile)) {
-                return GeneralResponse.ok(gameService.create(zipFile));
-            }
+            return GeneralResponse.ok(create(tmpFile));
         } finally {
             Files.delete(tmpFile.toPath());
+        }
+    }
+
+    private Game create(final File tmpFile) throws IOException {
+        try (ZipFile zipFile = new ZipFile(tmpFile)) {
+            final Game game = gameService.create(zipFile);
+            FileUtils.copyFile(tmpFile, gameService.file(game));
+            return game;
         }
     }
 }

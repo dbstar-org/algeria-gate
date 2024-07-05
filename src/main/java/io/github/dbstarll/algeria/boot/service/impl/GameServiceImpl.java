@@ -1,14 +1,17 @@
 package io.github.dbstarll.algeria.boot.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.dbstarll.algeria.boot.component.AlgeriaGateProperties;
 import io.github.dbstarll.algeria.boot.jpa.entity.Game;
 import io.github.dbstarll.algeria.boot.jpa.repository.GameRepository;
 import io.github.dbstarll.algeria.boot.service.GameService;
+import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -24,6 +27,7 @@ class GameServiceImpl implements GameService {
 
     private final ObjectMapper mapper;
     private final GameRepository gameRepository;
+    private final AlgeriaGateProperties algeriaGateProperties;
 
     @Override
     public Game create(final ZipFile zipFile) throws IOException {
@@ -31,6 +35,11 @@ class GameServiceImpl implements GameService {
                 .filter(e -> !e.getName().startsWith("__MACOSX"))
                 .collect(Collectors.toMap(e -> StringUtils.substringAfterLast(e.getName(), "/"), e -> e));
         return gameRepository.save(verify(parseFromDetail(zipFile, entries), entries));
+    }
+
+    @Override
+    public File file(final Game game) {
+        return new File(algeriaGateProperties.getGameRoot(), Uuid.toString(game.getId()) + ".zip");
     }
 
     private Game parseFromDetail(final ZipFile zipFile, final Map<String, ZipEntry> entries) throws IOException {
