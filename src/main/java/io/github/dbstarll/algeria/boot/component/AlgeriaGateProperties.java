@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 
 import java.io.File;
+import java.util.List;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -31,6 +32,9 @@ public final class AlgeriaGateProperties implements InitializingBean {
 
     @Setter
     private File gameRoot;
+
+    @Setter
+    private List<String> admin;
 
     @Override
     public void afterPropertiesSet() {
