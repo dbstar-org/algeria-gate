@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,8 +43,9 @@ class GameServiceImpl implements GameService {
     }
 
     @Override
-    public File file(final Game game) {
-        return new File(algeriaGateProperties.getGameRoot(), Uuid.toString(game.getId()) + ".zip");
+    public InputStream file(final Game game) throws IOException {
+        final File gameRoot = new File(algeriaGateProperties.getGameRoot(), Uuid.toString(game.getId()));
+        return Files.newInputStream(new File(gameRoot, game.getBin()).toPath());
     }
 
     private Game parseFromDetail(final ZipFile zipFile, final Map<String, ZipEntry> entries) throws IOException {
