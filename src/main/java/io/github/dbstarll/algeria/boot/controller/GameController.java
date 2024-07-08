@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -86,7 +86,7 @@ class GameController {
     @Operation(summary = "下载游戏", description = "下载游戏.")
     @GetMapping("/download/{gameId}")
     ResponseEntity<Resource> download(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
-                                      @PathVariable final UUID gameId) throws IOException {
+                                      @PathVariable final UUID gameId) {
         log.debug("download: {}", Uuid.toString(gameId));
         userService.verify(token, true);
         final Game game = gameRepository.getReferenceById(gameId);
@@ -94,7 +94,7 @@ class GameController {
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(game.getSize());
         headers.setContentDispositionFormData("attachment", game.getBin());
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(gameService.file(game)));
+        return ResponseEntity.ok().headers(headers).body(new FileSystemResource(gameService.file(game)));
     }
 
     @Setter
