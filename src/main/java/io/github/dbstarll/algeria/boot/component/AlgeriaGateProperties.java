@@ -34,12 +34,16 @@ public final class AlgeriaGateProperties implements InitializingBean {
     private File gameRoot;
 
     @Setter
+    private File tempRoot;
+
+    @Setter
     private List<String> admin;
 
     @Override
     public void afterPropertiesSet() {
         api.afterPropertiesSet();
         notNull(gameRoot, "game-root not set");
+        notNull(tempRoot, "temp-root not set");
     }
 
     @Getter

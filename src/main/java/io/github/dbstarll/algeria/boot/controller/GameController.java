@@ -58,7 +58,7 @@ class GameController {
         if (!"application/zip".equalsIgnoreCase(file.getContentType())) {
             throw new IOException("Unsupported file type: " + file.getContentType());
         }
-        final File tmpFile = File.createTempFile("upload-game-", ".zip");
+        final File tmpFile = File.createTempFile("upload-game-", ".zip", algeriaGateProperties.getTempRoot());
         try {
             file.transferTo(tmpFile);
             try (ZipFile zipFile = new ZipFile(tmpFile)) {
