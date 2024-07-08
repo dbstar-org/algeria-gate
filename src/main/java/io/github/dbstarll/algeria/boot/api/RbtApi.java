@@ -54,14 +54,29 @@ public final class RbtApi extends JsonApiClient {
         this.system = new System("/system");
     }
 
+    /**
+     * 铃音管理接口.
+     *
+     * @return ToneProvide
+     */
     public ToneProvide tone() {
         return toneProvide;
     }
 
+    /**
+     * 用户管理接口.
+     *
+     * @return UserManage
+     */
     public UserManage user() {
         return userManage;
     }
 
+    /**
+     * 系统管理接口.
+     *
+     * @return System
+     */
     public System system() {
         return system;
     }
@@ -140,6 +155,14 @@ public final class RbtApi extends JsonApiClient {
                     })).build(), QueryCatalogToneResponse.class);
         }
 
+        /**
+         * 该接口用于获取试听文件.
+         *
+         * @param resourceId 铃音ID
+         * @return 试听文件字节数组
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public byte[] get(final String resourceId) throws IOException, ApiException {
             return execute(post(moduleRoot + "/getfile").setEntity(auth(new GetFileRequest(),
                     request -> request.setResourceID(resourceId))).build(), byte[].class);
@@ -152,27 +175,64 @@ public final class RbtApi extends JsonApiClient {
 
         private final UserToneManage userToneManage = new UserToneManage("usertonemanage");
 
+        /**
+         * 用户订购铃音管理接口.
+         *
+         * @return UserToneManage
+         */
         public UserToneManage tone() {
             return userToneManage;
         }
 
+        /**
+         * 本接口用于Portal查询彩铃用户信息。根据返回消息的status字段判断用户状态.
+         *
+         * @param phone 手机号码
+         * @return QueryUserResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public QueryUserResponse queryUser(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/queryuser").setEntity(auth(new QueryUserRequest(),
                     request -> request.setPhoneNumber(phone))).build(), QueryUserResponse.class);
         }
 
+        /**
+         * 该接口用于查询用户产品.
+         *
+         * @param phone 手机号码
+         * @return QueryUserProductResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public QueryUserProductResponse queryUserProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/queryuserproduct")
                     .setEntity(auth(new QueryUserProductRequest(),
                             request -> request.setPhoneNumber(phone))).build(), QueryUserProductResponse.class);
         }
 
+        /**
+         * 本接口用于用户通过Portal订购彩铃业务.
+         *
+         * @param phone 手机号码
+         * @return BaseResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public BaseResponse subscribe(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/subscribe")
                     .setEntity(authUpdate(new SubscribeRequest(),
                             request -> request.setPhoneNumber(phone))).build(), BaseResponse.class);
         }
 
+        /**
+         * 该接口用于开通产品.
+         *
+         * @param phone 手机号码
+         * @return SubscribeProductResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public SubscribeProductResponse subscribeProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/subscribeproduct")
                     .setEntity(authUpdate(new SubscribeProductRequest(), request -> {
@@ -181,6 +241,14 @@ public final class RbtApi extends JsonApiClient {
                     })).build(), SubscribeProductResponse.class);
         }
 
+        /**
+         * 该接口用于用户退订产品.
+         *
+         * @param phone 手机号码
+         * @return SubscribeProductResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public SubscribeProductResponse unsubscribeProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/unsubscribeproduct")
                     .setEntity(authUpdate(new UnsubscribeProductRequest(), request -> {
@@ -189,13 +257,22 @@ public final class RbtApi extends JsonApiClient {
                     })).build(), SubscribeProductResponse.class);
         }
 
-        public EasyDownloadResponse easyDownload(final String phone, final String resourceID)
+        /**
+         * 该接口用于通过下载铃音或音乐盒开通RBT业务特性。在为用户下载RBT或音乐盒之前，系统先为用户开通RBT业务。该接口允许同时对特定用户进行订阅、下载和设置操作.
+         *
+         * @param phone      手机号码
+         * @param resourceId 铃音ID
+         * @return EasyDownloadResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
+        public EasyDownloadResponse easyDownload(final String phone, final String resourceId)
                 throws IOException, ApiException {
             return execute(post(moduleRoot + "/easydownload")
                     .setEntity(authUpdate(new EasyDownloadRequest(), request -> {
                         request.setPhoneNumber(phone);
                         request.setResourceType("1");
-                        request.setResourceID(new String[]{resourceID});
+                        request.setResourceID(new String[]{resourceId});
                     })).build(), EasyDownloadResponse.class);
         }
     }
@@ -204,14 +281,32 @@ public final class RbtApi extends JsonApiClient {
     public class UserToneManage {
         private final String moduleRoot;
 
+        /**
+         * 该接口用于查询用户个人铃音库，用户个人铃音库的availableDateTime在当前日期之前表示铃音欠费.
+         *
+         * @param phone 手机号码
+         * @return QueryInboxToneResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public QueryInboxToneResponse queryInboxTone(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/queryinboxtone").setEntity(auth(new QueryInboxToneRequest(),
                     request -> {
                         request.setPhoneNumber(phone);
                         request.setResourceType("1");
+                        request.setStatus("1");
                     })).build(), QueryInboxToneResponse.class);
         }
 
+        /**
+         * 该接口用于用户退订铃音.
+         *
+         * @param phone      手机号码
+         * @param resourceId 铃音ID
+         * @return BaseResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public BaseResponse delInboxTone(final String phone, final String resourceId) throws IOException, ApiException {
             return execute(delete(moduleRoot + "/delInboxTone").setEntity(authUpdate(new DelInboxToneRequest(),
                     request -> {
@@ -225,6 +320,15 @@ public final class RbtApi extends JsonApiClient {
     public class System {
         private final String moduleRoot;
 
+        /**
+         * 发送手机验证码短信.
+         *
+         * @param phone 手机号码
+         * @param code  验证码.
+         * @return BaseResponse
+         * @throws IOException  in case of a problem or the connection was aborted
+         * @throws ApiException in case of an api error
+         */
         public BaseResponse sendSm(final String phone, final String code) throws IOException, ApiException {
             return execute(post(moduleRoot + "/sendsm").setEntity(authUpdate(new SendSmRequest(), request -> {
                 request.setSmLabel(settings.getSystem().getSmLabel());
