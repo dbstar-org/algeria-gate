@@ -66,7 +66,7 @@ class GameServiceImpl implements GameService {
     }
 
     private ZipEntry verifyEntry(final Map<String, ZipEntry> entries, final String item, final String title) {
-        return Optional.ofNullable(entries.get(item)).filter(e -> e.getSize() > 0)
+        return Optional.ofNullable(entries.get(item))
                 .orElseThrow(() -> new UnsupportedOperationException(title + " not found: " + item));
     }
 
