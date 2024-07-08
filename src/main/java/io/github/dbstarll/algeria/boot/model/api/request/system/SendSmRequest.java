@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public final class SendSmRequest extends BaseUpdateRequest {
 
     private static final String DEFAULT_TIME_TYPE = "2"; // 实时发送
 
-    @NotBlank
+    @NotNull
     @Schema(description = "手机号码数组字符串")
     private String[] phoneNumbers;
 
