@@ -18,10 +18,18 @@ public interface ToneService {
     int update() throws IOException, ApiException;
 
     /**
-     * 分页查询铃音列表.
+     * 分页查询彩铃列表.
      *
      * @param pageable 分页参数
      * @return Page of ToneInfo
      */
     Page<ToneInfo> list(Pageable pageable);
+
+    /**
+     * 检查指定的彩铃ID是否在彩铃列表中.
+     *
+     * @param toneId 彩铃ID
+     * @return 是否在彩铃列表中
+     */
+    boolean exists(String toneId);
 }

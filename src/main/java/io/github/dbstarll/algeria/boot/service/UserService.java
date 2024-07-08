@@ -42,4 +42,12 @@ public interface UserService {
      * @return SessionTimeData
      */
     SessionTimeData logout(UUID token);
+
+    /**
+     * 检查是否已订阅彩铃.
+     *
+     * @param session SessionTimeData
+     * @return 是否已订阅彩铃
+     */
+    boolean isSubscribe(SessionTimeData session);
 }

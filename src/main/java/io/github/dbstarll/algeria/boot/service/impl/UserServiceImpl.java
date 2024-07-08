@@ -3,10 +3,12 @@ package io.github.dbstarll.algeria.boot.service.impl;
 import io.github.dbstarll.algeria.boot.api.RbtApi;
 import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
+import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import io.github.dbstarll.utils.net.api.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,8 +21,10 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 class UserServiceImpl implements UserService {
     private static final Duration SESSION_EXPIRE = Duration.ofMinutes(30);
+    private static final FastDateFormat FORMAT = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
     private final RbtApi rbtApi;
+    private final ToneService toneService;
 
     private final ConcurrentMap<UUID, SessionTimeData> sessions = new ConcurrentHashMap<>();
 
@@ -62,5 +66,16 @@ class UserServiceImpl implements UserService {
     @Override
     public SessionTimeData logout(final UUID token) {
         return sessions.remove(token);
+    }
+
+    @Override
+    public boolean isSubscribe(final SessionTimeData session) {
+        return session.getTones().stream()
+                .filter(t -> toneService.exists(t.getToneID()))
+                .anyMatch(t -> before(t.getAvailableDateTime()));
+    }
+
+    private boolean before(final String time) {
+        return FORMAT.format(System.currentTimeMillis()).compareTo(time) <= 0;
     }
 }

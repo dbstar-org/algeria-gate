@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service
 @RequiredArgsConstructor
 class ToneServiceImpl implements ToneService {
     private final List<ToneInfo> tones = new ArrayList<>();
+    private final Set<String> toneIds = new HashSet<>();
     private final ReentrantReadWriteLock toneLock = new ReentrantReadWriteLock();
 
     private final RbtApi rbtApi;
@@ -30,6 +33,8 @@ class ToneServiceImpl implements ToneService {
         try {
             tones.clear();
             tones.addAll(toneInfos);
+            toneIds.clear();
+            toneInfos.stream().map(ToneInfo::getToneID).forEach(toneIds::add);
             return tones.size();
         } finally {
             toneLock.writeLock().unlock();
@@ -51,5 +56,15 @@ class ToneServiceImpl implements ToneService {
         final int fromIndex = Math.min(list.size(), (int) pageable.getOffset());
         final int toIndex = Math.min(list.size(), fromIndex + pageable.getPageSize());
         return PageableExecutionUtils.getPage(list.subList(fromIndex, toIndex), pageable, list::size);
+    }
+
+    @Override
+    public boolean exists(final String toneId) {
+        toneLock.readLock().lock();
+        try {
+            return toneIds.contains(toneId);
+        } finally {
+            toneLock.readLock().unlock();
+        }
     }
 }

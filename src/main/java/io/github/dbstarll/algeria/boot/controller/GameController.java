@@ -2,6 +2,7 @@ package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.component.AlgeriaGateProperties;
 import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
+import io.github.dbstarll.algeria.boot.error.UnSubscribeException;
 import io.github.dbstarll.algeria.boot.jpa.entity.Game;
 import io.github.dbstarll.algeria.boot.jpa.repository.GameRepository;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
@@ -88,7 +89,9 @@ class GameController {
     ResponseEntity<Resource> download(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
                                       @PathVariable final UUID gameId) {
         log.debug("download: {}", Uuid.toString(gameId));
-        userService.verify(token, true);
+        if (!userService.isSubscribe(userService.verify(token, true))) {
+            throw new UnSubscribeException("用户未订购");
+        }
         final Game game = gameRepository.getReferenceById(gameId);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
