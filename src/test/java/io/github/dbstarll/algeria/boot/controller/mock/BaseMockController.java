@@ -48,15 +48,6 @@ public abstract class BaseMockController {
         return mapper.readTree(json);
     }
 
-    protected final <T> JsonNode delete(final String url, final T request) throws IOException {
-        final String json = httpClient.execute(ClassicRequestBuilder
-                .delete("https://116.63.194.38:17132/apiaccess/gw/rest" + url)
-                .setEntity(jsonEntity(request))
-                .build(), new BasicHttpClientResponseHandler());
-        System.out.println(json);
-        return mapper.readTree(json);
-    }
-
     private <T> HttpEntity jsonEntity(T request) throws JsonProcessingException {
         return EntityBuilder.create()
                 .setText(mapper.writeValueAsString(request))

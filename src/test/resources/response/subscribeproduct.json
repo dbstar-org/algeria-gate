@@ -1,0 +1,16 @@
+{
+  "returnCode": "000000",
+  "resultInfo": null,
+  "transactionID": null,
+  "operationID": 0,
+  "eventClassName": null,
+  "resultCode": 0,
+  "returnObjects": [
+    {
+      "phoneNumber": "18210008434",
+      "resultCode": "000000",
+      "status": "2",
+      "serviceID": ""
+    }
+  ]
+}

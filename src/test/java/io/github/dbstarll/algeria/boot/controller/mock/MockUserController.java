@@ -28,8 +28,7 @@ class MockUserController extends BaseMockController {
     @PostMapping("/queryuserproduct")
     JsonNode queryUserProduct(@Valid @RequestBody final QueryUserProductRequest request) throws IOException {
         log.debug("queryUserProduct: {}", request);
-        return post("/usermanage/queryuserproduct", request);
-//        return json("/response/queryuserproduct.json");
+        return json("/response/queryuserproduct-" + product.get() + ".json");
     }
 
     @PostMapping("/easydownload")
@@ -52,8 +51,7 @@ class MockUserController extends BaseMockController {
         if (Arrays.asList(request.getPhoneNumbers()).contains(TEST_MOBILE)) {
             product.set(true);
         }
-        return post("/usermanage/subscribeproduct", request);
-//        return json("/response/queryuserproduct.json");
+        return json("/response/subscribeproduct.json");
     }
 
     @PostMapping("/unsubscribeproduct")
@@ -62,8 +60,7 @@ class MockUserController extends BaseMockController {
         if (Arrays.asList(request.getPhoneNumbers()).contains(TEST_MOBILE)) {
             product.set(false);
         }
-        return post("/usermanage/unsubscribeproduct", request);
-//        return json("/response/queryuserproduct.json");
+        return json("/response/unsubscribeproduct.json");
     }
 
     @PostMapping("/subscribe")
