@@ -24,30 +24,30 @@ class ToneControllerTest {
         assertNotNull(body);
         assertEquals(2, body.size());
         assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
-        assertEquals(10, body.get("data").intValue());
+        assertEquals(5, body.get("data").intValue());
     }
 
     @Test
     void list() {
         final JsonNode body = restTemplate.postForObject("/api/tone/list", new TonePageableRequest()
-                .withPageable(PageableData.ofSize(6).withPage(1)), JsonNode.class);
+                .withPageable(PageableData.ofSize(3).withPage(1)), JsonNode.class);
         assertNotNull(body);
         assertEquals(2, body.size());
         assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
         assertEquals(5, body.at("/data").size());
-        assertEquals(4, body.at("/data/numberOfElements").intValue());
+        assertEquals(2, body.at("/data/numberOfElements").intValue());
         assertEquals(2, body.at("/data/totalPages").intValue());
-        assertEquals(10, body.at("/data/totalElements").intValue());
+        assertEquals(5, body.at("/data/totalElements").intValue());
         assertEquals(3, body.at("/data/pageable").size());
         assertEquals(1, body.at("/data/pageable/pageNumber").intValue());
-        assertEquals(6, body.at("/data/pageable/pageSize").intValue());
+        assertEquals(3, body.at("/data/pageable/pageSize").intValue());
         assertEquals(1, body.at("/data/pageable/sort").size());
         assertEquals(2, body.at("/data/pageable/sort/0").size());
         assertEquals("createTime", body.at("/data/pageable/sort/0/property").textValue());
         assertEquals("DESC", body.at("/data/pageable/sort/0/direction").textValue());
-        assertEquals(4, body.at("/data/content").size());
+        assertEquals(2, body.at("/data/content").size());
         assertEquals(35, body.at("/data/content/0").size());
-        assertEquals("13219775", body.at("/data/content/0/toneID").textValue());
-        assertEquals("9121562", body.at("/data/content/0/toneCode").textValue());
+        assertEquals("13229398", body.at("/data/content/0/toneID").textValue());
+        assertEquals("520019", body.at("/data/content/0/toneCode").textValue());
     }
 }

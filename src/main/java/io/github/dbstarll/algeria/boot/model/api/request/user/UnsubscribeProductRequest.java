@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public final class UnsubscribeProductRequest extends BaseUpdateRequest {
     private static final long serialVersionUID = 8200988989701841387L;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "手机号码数组字符串")
     private String[] phoneNumbers;
 

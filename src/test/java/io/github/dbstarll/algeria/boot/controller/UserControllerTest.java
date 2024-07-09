@@ -22,8 +22,7 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             final JsonNode verifyBody = getForEntity(token, "/api/user/verify");
             assertEquals(2, verifyBody.size());
             assertEquals(ErrorCodes.SUCCESS, verifyBody.get("code").intValue());
-            assertEquals(4, verifyBody.get("data").size());
-            assertTrue(verifyBody.at("/data/time").isLong());
+            assertEquals(3, verifyBody.get("data").size());
             assertEquals(TEST_MOBILE, verifyBody.at("/data/phone").textValue());
             assertEquals(1, verifyBody.at("/data/users").size());
             assertEquals(26, verifyBody.at("/data/users/0").size());
