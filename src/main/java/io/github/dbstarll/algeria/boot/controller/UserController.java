@@ -6,6 +6,8 @@ import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.ContentDownloadInfo;
 import io.github.dbstarll.algeria.boot.model.api.response.user.EasyDownloadResponse;
+import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProduct;
+import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProductResponse;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.UserService;
@@ -64,6 +66,28 @@ class UserController {
         final BaseResponse response = rbtApi.user().tone().delInboxTone(session.getPhone(), request.getResourceId());
         userService.update(token);
         return GeneralResponse.ok(response.getResultInfo());
+    }
+
+    @Operation(summary = "开通VIP", description = "该接口用于开通VIP.")
+    @GetMapping("/subscribe-vip")
+    GeneralResponse<List<SubscribeProduct>> subscribeVip(
+            @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) throws IOException, ApiException {
+        log.debug("subscribeVip");
+        final SessionTimeData session = userService.verify(token, true);
+        final SubscribeProductResponse response = rbtApi.user().subscribeProduct(session.getPhone());
+        userService.update(token);
+        return GeneralResponse.ok(response.getReturnObjects());
+    }
+
+    @Operation(summary = "退订VIP", description = "该接口用于退订VIP.")
+    @GetMapping("/unsubscribe-vip")
+    GeneralResponse<List<SubscribeProduct>> unsubscribeVip(
+            @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) throws IOException, ApiException {
+        log.debug("unsubscribeVip");
+        final SessionTimeData session = userService.verify(token, true);
+        final SubscribeProductResponse response = rbtApi.user().unsubscribeProduct(session.getPhone());
+        userService.update(token);
+        return GeneralResponse.ok(response.getReturnObjects());
     }
 
     @Getter
