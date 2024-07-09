@@ -194,7 +194,10 @@ public final class RbtApi extends JsonApiClient {
          */
         public QueryUserResponse queryUser(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/queryuser").setEntity(auth(new QueryUserRequest(),
-                    request -> request.setPhoneNumber(phone))).build(), QueryUserResponse.class);
+                    request -> {
+                        request.setStatus("2");
+                        request.setPhoneNumber(phone);
+                    })).build(), QueryUserResponse.class);
         }
 
         /**
@@ -208,7 +211,11 @@ public final class RbtApi extends JsonApiClient {
         public QueryUserProductResponse queryUserProduct(final String phone) throws IOException, ApiException {
             return execute(post(moduleRoot + "/queryuserproduct")
                     .setEntity(auth(new QueryUserProductRequest(),
-                            request -> request.setPhoneNumber(phone))).build(), QueryUserProductResponse.class);
+                            request -> {
+                                request.setProductID(settings.getUser().getProductId());
+                                request.setStatus("2");
+                                request.setPhoneNumber(phone);
+                            })).build(), QueryUserProductResponse.class);
         }
 
         /**
