@@ -49,7 +49,7 @@ class PhoneServiceImpl implements PhoneService {
         final String code = verifyCodeService.generate();
         rbtApi.system().sendSm(phone, code);
         valueOperations.set(cacheKey(phone), code, VERIFY_CODE_EXPIRE);
-        valueOperations.set(cacheWaitKey, "code", VERIFY_CODE_INTERVAL);
+        valueOperations.set(cacheWaitKey, Long.toString(System.currentTimeMillis()), VERIFY_CODE_INTERVAL);
         return VERIFY_CODE_INTERVAL.getSeconds();
     }
 
