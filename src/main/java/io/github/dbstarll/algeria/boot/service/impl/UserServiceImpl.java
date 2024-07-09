@@ -2,6 +2,9 @@ package io.github.dbstarll.algeria.boot.service.impl;
 
 import io.github.dbstarll.algeria.boot.api.RbtApi;
 import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
+import io.github.dbstarll.algeria.boot.model.api.response.tone.ToneInfo;
+import io.github.dbstarll.algeria.boot.model.api.response.user.ProductInfo;
+import io.github.dbstarll.algeria.boot.model.api.response.user.UserProductInfo;
 import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
 import io.github.dbstarll.algeria.boot.service.ToneService;
 import io.github.dbstarll.algeria.boot.service.UserService;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,7 +25,8 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 class UserServiceImpl implements UserService {
     private static final Duration SESSION_EXPIRE = Duration.ofMinutes(30);
-    private static final FastDateFormat FORMAT = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+    private static final FastDateFormat FORMAT_TIME = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+    private static final FastDateFormat FORMAT_DAY = FastDateFormat.getInstance("yyyy-MM-dd");
 
     private final RbtApi rbtApi;
     private final ToneService toneService;
@@ -70,12 +75,46 @@ class UserServiceImpl implements UserService {
 
     @Override
     public boolean isSubscribe(final SessionTimeData session, final boolean vip) {
-        return session.getTones().stream()
-                .filter(t -> toneService.exists(t.getToneID()))
-                .anyMatch(t -> before(t.getAvailableDateTime()));
+        if (isVip(session)) {
+            return true;
+        } else if (vip) {
+            return false;
+        } else {
+            return isSubscribe(session);
+        }
     }
 
-    private boolean before(final String time) {
-        return FORMAT.format(System.currentTimeMillis()).compareTo(time) <= 0;
+    private boolean isSubscribe(final SessionTimeData session) {
+        return Optional.ofNullable(session.getTones())
+                .map(ps -> ps.stream().anyMatch(this::isSubscribe))
+                .orElse(false);
+    }
+
+    private boolean isSubscribe(final ToneInfo tone) {
+        return toneService.exists(tone.getToneID()) && beforeTime(tone.getAvailableDateTime());
+    }
+
+    private boolean isVip(final SessionTimeData session) {
+        return Optional.ofNullable(session.getProducts())
+                .map(ps -> ps.stream().anyMatch(this::isVip))
+                .orElse(false);
+    }
+
+    private boolean isVip(final UserProductInfo product) {
+        return Optional.ofNullable(product.getProductinfos())
+                .map(ps -> ps.stream().anyMatch(this::isVip))
+                .orElse(false);
+    }
+
+    private boolean isVip(final ProductInfo product) {
+        return beforeDay(product.getMonthFeeEndDate());
+    }
+
+    private boolean beforeTime(final String time) {
+        return FORMAT_TIME.format(System.currentTimeMillis()).compareTo(time) <= 0;
+    }
+
+    private boolean beforeDay(final String day) {
+        return FORMAT_DAY.format(System.currentTimeMillis()).compareTo(day) <= 0;
     }
 }
