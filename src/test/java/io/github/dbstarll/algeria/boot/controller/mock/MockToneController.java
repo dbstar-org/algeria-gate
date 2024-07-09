@@ -19,8 +19,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 class MockToneController extends BaseMockController {
-    private static final String TEST_TONE_ID = "13229395";
-
     @PostMapping("/querycatalogtone")
     JsonNode queryCatalogTone(@Valid @RequestBody final QueryCatalogToneRequest request) throws IOException {
         log.debug("queryCatalogTone: {}", request);

@@ -15,8 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-abstract class BaseMockController {
+public abstract class BaseMockController {
+    public static final AtomicBoolean subscribe = new AtomicBoolean(false);
+    public static final AtomicBoolean product = new AtomicBoolean(false);
+    public static final AtomicBoolean tone = new AtomicBoolean(false);
+
+    protected static final String TEST_MOBILE = "18210008434";
+    protected static final String TEST_TONE_ID = "13229395";
+
     @Autowired
     private ObjectMapper mapper;
 

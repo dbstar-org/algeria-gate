@@ -26,7 +26,10 @@ class MockUserToneController extends BaseMockController {
     @DeleteMapping("/delInboxTone")
     JsonNode delInboxTone(@Valid @RequestBody final DelInboxToneRequest request) throws IOException {
         log.debug("delInboxTone: {}", request);
+        if (TEST_MOBILE.equals(request.getPhoneNumber()) && TEST_TONE_ID.equals(request.getResourceID())) {
+            tone.set(false);
+        }
         return delete("/usertonemanage/delInboxTone", request);
-//        return json("/response/queryuser.json");
+//        return json("/response/delInboxTone.json");
     }
 }
