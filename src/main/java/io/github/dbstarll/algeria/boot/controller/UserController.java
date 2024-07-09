@@ -9,7 +9,7 @@ import io.github.dbstarll.algeria.boot.model.api.response.user.EasyDownloadRespo
 import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProduct;
 import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProductResponse;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
-import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
+import io.github.dbstarll.algeria.boot.model.service.Session;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
 import io.github.dbstarll.utils.net.api.ApiException;
@@ -39,7 +39,7 @@ class UserController {
 
     @Operation(summary = "验证token", description = "检查token是否有效，并返回用户信息.")
     @GetMapping("/verify")
-    GeneralResponse<SessionTimeData> verify(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
+    GeneralResponse<Session> verify(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
         log.debug("verify: {}", Uuid.toString(token));
         return GeneralResponse.ok(userService.verify(token, false));
     }
@@ -50,7 +50,7 @@ class UserController {
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
             @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("easyDownload: {}", request);
-        final SessionTimeData session = userService.verify(token, true);
+        final Session session = userService.verify(token, true);
         final EasyDownloadResponse response = rbtApi.user().easyDownload(session.getPhone(), request.getResourceId());
         userService.update(token);
         return GeneralResponse.ok(response.getContentDownloadInfo());
@@ -62,7 +62,7 @@ class UserController {
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
             @Valid @RequestBody final ResourceRequest request) throws IOException, ApiException {
         log.debug("delInboxTone: {}", request);
-        final SessionTimeData session = userService.verify(token, true);
+        final Session session = userService.verify(token, true);
         final BaseResponse response = rbtApi.user().tone().delInboxTone(session.getPhone(), request.getResourceId());
         userService.update(token);
         return GeneralResponse.ok(response.getResultInfo());
@@ -73,7 +73,7 @@ class UserController {
     GeneralResponse<List<SubscribeProduct>> subscribeVip(
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) throws IOException, ApiException {
         log.debug("subscribeVip");
-        final SessionTimeData session = userService.verify(token, true);
+        final Session session = userService.verify(token, true);
         final SubscribeProductResponse response = rbtApi.user().subscribeProduct(session.getPhone());
         userService.update(token);
         return GeneralResponse.ok(response.getReturnObjects());
@@ -84,7 +84,7 @@ class UserController {
     GeneralResponse<List<SubscribeProduct>> unsubscribeVip(
             @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) throws IOException, ApiException {
         log.debug("unsubscribeVip");
-        final SessionTimeData session = userService.verify(token, true);
+        final Session session = userService.verify(token, true);
         final SubscribeProductResponse response = rbtApi.user().unsubscribeProduct(session.getPhone());
         userService.update(token);
         return GeneralResponse.ok(response.getReturnObjects());

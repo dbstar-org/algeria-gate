@@ -9,7 +9,7 @@ import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.response.BasePageableRequest;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
 import io.github.dbstarll.algeria.boot.model.response.PageableResponse;
-import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
+import io.github.dbstarll.algeria.boot.model.service.Session;
 import io.github.dbstarll.algeria.boot.service.GameService;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
@@ -70,7 +70,7 @@ class GameController {
         }
     }
 
-    private void checkAdmin(final SessionTimeData session) {
+    private void checkAdmin(final Session session) {
         if (!Optional.ofNullable(algeriaGateProperties.getAdmin())
                 .filter(admins -> admins.contains(session.getPhone()))
                 .isPresent()) {

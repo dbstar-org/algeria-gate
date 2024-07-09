@@ -4,7 +4,7 @@ import io.github.dbstarll.algeria.boot.error.InvalidVerifyCodeException;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
-import io.github.dbstarll.algeria.boot.model.service.SessionTimeData;
+import io.github.dbstarll.algeria.boot.model.service.Session;
 import io.github.dbstarll.algeria.boot.service.PhoneService;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
@@ -49,13 +49,13 @@ class LoginController {
         if (!phoneService.verification(request.getPhone(), request.getVerifyCode()).isPresent()) {
             throw new InvalidVerifyCodeException("验证码错误");
         } else {
-            return GeneralResponse.ok(userService.login(request.getPhone()));
+            return GeneralResponse.ok(userService.login(request.getPhone()).getKey());
         }
     }
 
     @Operation(summary = "退出登录", description = "退出当前登录并使token失效.")
     @GetMapping("/logout")
-    GeneralResponse<SessionTimeData> logout(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
+    GeneralResponse<Session> logout(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
         log.debug("logout: {}", Uuid.toString(token));
         userService.verify(token, false);
         return GeneralResponse.ok(userService.logout(token));
