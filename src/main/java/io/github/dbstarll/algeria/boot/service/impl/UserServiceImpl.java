@@ -76,7 +76,6 @@ class UserServiceImpl implements UserService {
 
     private Session putToCache(final UUID token, final String phone) throws IOException, ApiException {
         final Session session = new Session(phone,
-                rbtApi.user().queryUser(phone).getUserInfos(),
                 rbtApi.user().queryUserProduct(phone).getUserProductInfos(),
                 rbtApi.user().tone().queryInboxTone(phone).getToneInfos()
         );
