@@ -19,8 +19,7 @@ class MockUserToneController extends BaseMockController {
     @PostMapping("/queryinboxtone")
     JsonNode queryInboxTone(@Valid @RequestBody final QueryInboxToneRequest request) throws IOException {
         log.debug("queryInboxTone: {}", request);
-        return post("/usertonemanage/queryinboxtone", request);
-//        return json("/response/queryuser.json");
+        return json("/response/queryinboxtone-" + tone.get() + ".json");
     }
 
     @DeleteMapping("/delInboxTone")
@@ -29,7 +28,6 @@ class MockUserToneController extends BaseMockController {
         if (TEST_MOBILE.equals(request.getPhoneNumber()) && TEST_TONE_ID.equals(request.getResourceID())) {
             tone.set(false);
         }
-        return delete("/usertonemanage/delInboxTone", request);
-//        return json("/response/delInboxTone.json");
+        return json("/response/delInboxTone.json");
     }
 }
