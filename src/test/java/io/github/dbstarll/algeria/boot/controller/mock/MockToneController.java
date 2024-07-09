@@ -19,6 +19,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 class MockToneController extends BaseMockController {
+    private static final String TEST_TONE_ID = "13229395";
+
     @PostMapping("/querycatalogtone")
     JsonNode queryCatalogTone(@Valid @RequestBody final QueryCatalogToneRequest request) throws IOException {
         log.debug("queryCatalogTone: {}", request);
@@ -30,8 +32,12 @@ class MockToneController extends BaseMockController {
     }
 
     @PostMapping("/getfile")
-    byte[] getFile(@Valid @RequestBody final GetFileRequest request) throws IOException {
+    Object getFile(@Valid @RequestBody final GetFileRequest request) throws IOException {
         log.debug("getFile: {}", request);
-        return postBytes("/toneprovide/getfile", request);
+        if (TEST_TONE_ID.equals(request.getResourceID())) {
+            return bytes("/response/getfile-base64.txt");
+        } else {
+            return json("/response/getfile-failed.json");
+        }
     }
 }

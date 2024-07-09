@@ -3,7 +3,6 @@ package io.github.dbstarll.algeria.boot.controller.mock;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.dbstarll.utils.http.client.response.ByteArrayResponseHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.entity.EntityBuilder;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 abstract class BaseMockController {
     @Autowired
@@ -27,6 +27,10 @@ abstract class BaseMockController {
         return mapper.readTree(IOUtils.resourceToString(path, StandardCharsets.UTF_8));
     }
 
+    protected final byte[] bytes(String path) throws IOException {
+        return Base64.getDecoder().decode(IOUtils.resourceToString(path, StandardCharsets.UTF_8));
+    }
+
     protected final <T> JsonNode post(final String url, final T request) throws IOException {
         final String json = httpClient.execute(ClassicRequestBuilder
                 .post("https://116.63.194.38:17132/apiaccess/gw/rest" + url)
@@ -34,13 +38,6 @@ abstract class BaseMockController {
                 .build(), new BasicHttpClientResponseHandler());
         System.out.println(json);
         return mapper.readTree(json);
-    }
-
-    protected final <T> byte[] postBytes(final String url, final T request) throws IOException {
-        return httpClient.execute(ClassicRequestBuilder
-                .post("https://116.63.194.38:17132/apiaccess/gw/rest" + url)
-                .setEntity(jsonEntity(request))
-                .build(), new ByteArrayResponseHandler(true));
     }
 
     protected final <T> JsonNode delete(final String url, final T request) throws IOException {
