@@ -132,7 +132,7 @@ class RbtApiTest {
     }
 
     @Test
-    void subscribe() {
+    void subscribeFailed() {
         final RbtApiException e = assertThrowsExactly(RbtApiException.class, () -> rbtApi.user().subscribe(TEST_MOBILE));
         assertEquals("RBT call failed[301009]", e.getMessage());
         assertEquals("301009", e.getReturnCode());

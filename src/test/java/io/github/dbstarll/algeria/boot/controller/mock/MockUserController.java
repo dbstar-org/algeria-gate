@@ -67,9 +67,11 @@ class MockUserController extends BaseMockController {
     JsonNode subscribe(@Valid @RequestBody final SubscribeRequest request) throws IOException {
         log.debug("subscribe: {}", request);
         if (TEST_MOBILE.equals(request.getPhoneNumber())) {
+            if (subscribe.get()) {
+                return json("/response/subscribe-failed.json");
+            }
             subscribe.set(true);
         }
         return post("/usermanage/subscribe", request);
-//        return json("/response/queryuserproduct.json");
     }
 }
