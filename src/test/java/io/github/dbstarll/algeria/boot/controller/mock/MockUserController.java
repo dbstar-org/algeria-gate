@@ -39,10 +39,11 @@ class MockUserController extends BaseMockController {
             subscribe.set(true);
             if (Arrays.asList(request.getResourceID()).contains(TEST_TONE_ID)) {
                 tone.set(true);
+            } else {
+                return json("/response/easydownload-failed.json");
             }
         }
-        return post("/usermanage/easydownload", request);
-//        return json("/response/queryuserproduct.json");
+        return json("/response/easydownload.json");
     }
 
     @PostMapping("/subscribeproduct")

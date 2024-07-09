@@ -1,0 +1,22 @@
+{
+  "returnCode": "000000",
+  "resultInfo": null,
+  "transactionID": null,
+  "operationID": 0,
+  "eventClassName": null,
+  "resultCode": 0,
+  "failedResources": null,
+  "toneTransactionID": null,
+  "contentDownloadInfo": [
+    {
+      "resourceType": "1",
+      "resourceId": "13229395",
+      "resourceCode": "601520000000000016",
+      "chargedPrice": "5000",
+      "chargeTime": "2024-07-09 23:01:48",
+      "duration": "60",
+      "relativeExpiryDate": "2024-09-07 23:01:48"
+    }
+  ],
+  "serviceMonthFeeInfo": null
+}

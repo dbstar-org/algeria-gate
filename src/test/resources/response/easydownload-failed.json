@@ -1,0 +1,18 @@
+{
+  "returnCode": "301549",
+  "resultInfo": null,
+  "transactionID": null,
+  "operationID": 0,
+  "eventClassName": null,
+  "resultCode": 0,
+  "failedResources": [
+    {
+      "returnCode": "302003",
+      "resourceID": "123456",
+      "resourceCode": null
+    }
+  ],
+  "toneTransactionID": [],
+  "contentDownloadInfo": null,
+  "serviceMonthFeeInfo": null
+}
