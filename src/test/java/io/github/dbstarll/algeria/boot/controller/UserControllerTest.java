@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class UserControllerTest extends AbstractBaseSpringBootTest {
-    private static final String TEST_MOBILE = "18210008435";
+    private static final String TEST_MOBILE = "18210008434";
     private static final String TEST_TONE_ID = "13229395";
 
     @Test
@@ -26,7 +26,9 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             assertEquals(TEST_MOBILE, verifyBody.at("/data/phone").textValue());
             assertEquals(1, verifyBody.at("/data/users").size());
             assertEquals(26, verifyBody.at("/data/users/0").size());
-            assertEquals(0, verifyBody.at("/data/tones").size());
+            assertEquals(1, verifyBody.at("/data/tones").size());
+            assertEquals(52, verifyBody.at("/data/tones/0").size());
+            assertEquals("13219578", verifyBody.at("/data/tones/0/toneID").textValue());
         });
     }
 

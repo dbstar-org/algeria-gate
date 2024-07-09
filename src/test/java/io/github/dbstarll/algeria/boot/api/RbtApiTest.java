@@ -71,11 +71,11 @@ class RbtApiTest {
         assertEquals("0", body.get("operationID").textValue());
         assertEquals("0", body.get("resultCode").textValue());
         assertEquals(1, body.get("userInfos").size());
-        assertEquals(29, body.at("/userInfos/0").size());
+        assertEquals(26, body.at("/userInfos/0").size());
         assertEquals(TEST_MOBILE, body.at("/userInfos/0/phoneNumber").textValue());
         assertEquals(1, body.at("/userInfos/0/serviceOrders").size());
         assertEquals(18, body.at("/userInfos/0/serviceOrders/0").size());
-        assertEquals("44070863", body.at("/userInfos/0/serviceOrders/0/orderID").textValue());
+        assertEquals("44110682", body.at("/userInfos/0/serviceOrders/0/orderID").textValue());
     }
 
     @Test

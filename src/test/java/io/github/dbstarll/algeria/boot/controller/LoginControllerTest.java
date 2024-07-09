@@ -73,7 +73,7 @@ class LoginControllerTest extends AbstractBaseSpringBootTest {
             assertEquals(3, body.get("data").size());
             assertEquals(TEST_MOBILE, body.at("/data/phone").textValue());
             assertEquals(1, body.at("/data/users").size());
-            assertEquals(29, body.at("/data/users/0").size());
+            assertEquals(26, body.at("/data/users/0").size());
             assertEquals(1, body.at("/data/tones").size());
             assertEquals(52, body.at("/data/tones/0").size());
         });

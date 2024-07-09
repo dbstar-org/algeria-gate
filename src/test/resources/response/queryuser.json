@@ -8,7 +8,7 @@
   "recordSum": "-1",
   "userInfos": [
     {
-      "phoneNumber": "18210008435",
+      "phoneNumber": "18210008434",
       "pwd": null,
       "operator": "71",
       "name": null,
@@ -49,7 +49,7 @@
       "initialCreateTime": "2024-06-27 15:58:56",
       "serviceOrders": [
         {
-          "phoneNumber": "18210008435",
+          "phoneNumber": "18210008434",
           "serviceID": "6",
           "startTime": "2024-06-27 15:58:56",
           "endTime": "2999-12-30 23:59:59",
@@ -64,7 +64,7 @@
           "registerTime": "2024-06-27 15:58:56",
           "upstatusTime": "2024-06-27 15:58:56",
           "brandModifyDate": "2024-06-27 00:00:00",
-          "userDownTime": "2024-07-09 08:24:48",
+          "userDownTime": "2024-07-09 22:30:13",
           "operator": "71",
           "groupID": null,
           "chargeMonthfeeBeginTime": null,
