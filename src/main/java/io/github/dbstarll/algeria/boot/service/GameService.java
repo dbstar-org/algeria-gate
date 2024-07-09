@@ -12,9 +12,10 @@ public interface GameService {
      * 从zip文件来创建游戏.
      *
      * @param zipFile zip压缩文件
+     * @param vip     是否VIP游戏
      * @return 新建的游戏.
      */
-    Map.Entry<Game, File> create(ZipFile zipFile) throws IOException;
+    Map.Entry<Game, File> create(ZipFile zipFile, boolean vip) throws IOException;
 
     /**
      * 获得游戏介质文件.

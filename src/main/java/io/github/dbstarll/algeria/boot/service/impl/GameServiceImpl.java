@@ -33,11 +33,11 @@ class GameServiceImpl implements GameService {
     private final AlgeriaGateProperties algeriaGateProperties;
 
     @Override
-    public Map.Entry<Game, File> create(final ZipFile zipFile) throws IOException {
+    public Map.Entry<Game, File> create(final ZipFile zipFile, final boolean vip) throws IOException {
         final Map<String, ZipEntry> entries = zipFile.stream().filter(Predicates.negate(ZipEntry::isDirectory))
                 .filter(e -> !e.getName().startsWith("__MACOSX"))
                 .collect(Collectors.toMap(e -> StringUtils.substringAfterLast(e.getName(), "/"), e -> e));
-        final Game game = gameRepository.save(verify(parseFromDetail(zipFile, entries), entries));
+        final Game game = gameRepository.save(verify(parseFromDetail(zipFile, entries), entries, vip));
         return EntryWrapper.wrap(game, save(game, zipFile, entries));
     }
 
@@ -55,13 +55,14 @@ class GameServiceImpl implements GameService {
         }
     }
 
-    private Game verify(final Game game, final Map<String, ZipEntry> entries) {
+    private Game verify(final Game game, final Map<String, ZipEntry> entries, final boolean vip) {
         game.setSize(verifyEntry(entries, game.getBin(), "安装包").getSize());
         verifyEntry(entries, game.getIconBig(), "大图标");
         verifyEntry(entries, game.getIconSmall(), "小图标");
         Optional.ofNullable(game.getScreenshots())
                 .orElseThrow(() -> new UnsupportedOperationException("游戏截图 not found"))
                 .forEach(s -> verifyEntry(entries, s, "游戏截图"));
+        game.setVip(vip);
         return game;
     }
 

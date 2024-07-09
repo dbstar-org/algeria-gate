@@ -51,9 +51,10 @@ class GameController {
     @PostMapping("/upload")
     @Transactional
     public GeneralResponse<Game> upload(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
-                                        @RequestParam("file") final MultipartFile file) throws IOException {
-        log.debug("upload name: {}, type: {}, size: {}", file.getOriginalFilename(), file.getContentType(),
-                file.getSize());
+                                        @RequestParam("file") final MultipartFile file,
+                                        @RequestParam("vip") final boolean vip) throws IOException {
+        log.debug("upload name: {}, type: {}, size: {}, vip: {}", file.getOriginalFilename(), file.getContentType(),
+                file.getSize(), vip);
         checkAdmin(userService.verify(token, true));
         if (!"application/zip".equalsIgnoreCase(file.getContentType())) {
             throw new IOException("Unsupported file type: " + file.getContentType());
@@ -62,7 +63,7 @@ class GameController {
         try {
             file.transferTo(tmpFile);
             try (ZipFile zipFile = new ZipFile(tmpFile)) {
-                return GeneralResponse.ok(gameService.create(zipFile).getKey());
+                return GeneralResponse.ok(gameService.create(zipFile, vip).getKey());
             }
         } finally {
             Files.delete(tmpFile.toPath());
