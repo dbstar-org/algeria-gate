@@ -90,10 +90,10 @@ class GameController {
     ResponseEntity<Resource> download(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
                                       @PathVariable final UUID gameId) {
         log.debug("download: {}", Uuid.toString(gameId));
-        if (!userService.isSubscribe(userService.verify(token, true))) {
-            throw new UnSubscribeException("用户未订购");
-        }
         final Game game = gameRepository.getReferenceById(gameId);
+        if (!userService.isSubscribe(userService.verify(token, true), game.isVip())) {
+            throw new UnSubscribeException("用户未订购", game.isVip());
+        }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(game.getSize());

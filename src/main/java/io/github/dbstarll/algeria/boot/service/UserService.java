@@ -47,7 +47,8 @@ public interface UserService {
      * 检查是否已订阅彩铃.
      *
      * @param session SessionTimeData
+     * @param vip     是否VIP
      * @return 是否已订阅彩铃
      */
-    boolean isSubscribe(SessionTimeData session);
+    boolean isSubscribe(SessionTimeData session, boolean vip);
 }

@@ -9,9 +9,11 @@ public final class UnSubscribeException extends AlgeriaException {
      * 构建UnSubscribeException.
      *
      * @param message 异常消息
+     * @param vip     是否VIP
      */
-    public UnSubscribeException(final String message) {
+    public UnSubscribeException(final String message, final boolean vip) {
         super(message);
+        setData(data -> data.put("vip", vip));
     }
 
     @Override

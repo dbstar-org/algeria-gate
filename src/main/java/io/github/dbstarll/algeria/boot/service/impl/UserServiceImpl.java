@@ -69,7 +69,7 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isSubscribe(final SessionTimeData session) {
+    public boolean isSubscribe(final SessionTimeData session, final boolean vip) {
         return session.getTones().stream()
                 .filter(t -> toneService.exists(t.getToneID()))
                 .anyMatch(t -> before(t.getAvailableDateTime()));
