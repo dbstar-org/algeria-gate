@@ -4,7 +4,10 @@ import io.github.dbstarll.algeria.boot.component.AlgeriaGateProperties;
 import io.github.dbstarll.algeria.boot.error.InvalidAccessTokenException;
 import io.github.dbstarll.algeria.boot.error.UnSubscribeException;
 import io.github.dbstarll.algeria.boot.jpa.entity.Game;
+import io.github.dbstarll.algeria.boot.jpa.entity.UserGame;
+import io.github.dbstarll.algeria.boot.jpa.entity.upk.UserGameUpk;
 import io.github.dbstarll.algeria.boot.jpa.repository.GameRepository;
+import io.github.dbstarll.algeria.boot.jpa.repository.UserGameRepository;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.response.BasePageableRequest;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
@@ -46,6 +49,7 @@ class GameController {
     private final GameService gameService;
     private final AlgeriaGateProperties algeriaGateProperties;
     private final GameRepository gameRepository;
+    private final UserGameRepository userGameRepository;
 
     @Operation(summary = "上传游戏", description = "运营商上传游戏到平台.")
     @PostMapping("/upload")
@@ -87,13 +91,24 @@ class GameController {
 
     @Operation(summary = "下载游戏", description = "下载游戏.")
     @GetMapping("/download/{gameId}")
-    ResponseEntity<Resource> download(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
-                                      @PathVariable final UUID gameId) {
+    @Transactional
+    public ResponseEntity<Resource> download(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
+                                             @PathVariable final UUID gameId) {
         log.debug("download: {}", Uuid.toString(gameId));
         final Game game = gameRepository.getReferenceById(gameId);
-        if (!userService.isSubscribe(userService.verify(token, true), game.isVip())) {
+        final Session session = userService.verify(token, true);
+        if (!userService.isSubscribe(session, game.isVip())) {
             throw new UnSubscribeException("用户未订购", game.isVip());
         }
+        final UserGameUpk id = new UserGameUpk(session.getPhone(), game.getId());
+        userGameRepository.save(userGameRepository.findById(id).map(userGame -> {
+            userGame.setDownloadCount(userGame.getDownloadCount() + 1);
+            return userGame;
+        }).orElseGet(() -> {
+            final UserGame userGame = new UserGame(new UserGameUpk(session.getPhone(), game.getId()));
+            userGame.setDownloadCount(1);
+            return userGame;
+        }));
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(game.getSize());
