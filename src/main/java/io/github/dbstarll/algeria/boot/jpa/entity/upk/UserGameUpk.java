@@ -20,9 +20,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public final class UserGameUpk extends BaseModel {
     private static final long serialVersionUID = -7698641322315252441L;
+    private static final int LENGTH_OF_MOBILE = 50;
 
     @Comment("用户手机号")
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, length = LENGTH_OF_MOBILE)
     private String phone;
 
     @Column(nullable = false, updatable = false, length = Uuid.LENGTH_OF_UUID_KEY)
