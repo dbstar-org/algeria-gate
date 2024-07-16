@@ -12,4 +12,16 @@ spring:
     port: 26379
 
 algeria-gate:
+  version: ${git.commit.id.describe:unknown}
   verify-code: "476287"
+  game-root: target/games
+  temp-root: target/temp
+  api:
+    rbt:
+      uri: http://localhost:8080
+      context: /
+      portal-account: test
+      portal-pwd: test
+      portal-type: -1
+      role: -1
+      role-code: test
