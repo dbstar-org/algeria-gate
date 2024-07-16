@@ -19,6 +19,15 @@ public interface UserService {
     Map.Entry<UUID, Session> login(String phone) throws IOException, ApiException;
 
     /**
+     * 根据手机查询会员身份信息.
+     *
+     * @param phone    手机号码
+     * @param checkVip 检查是否VIP
+     * @return 是否会员
+     */
+    boolean inspect(String phone, boolean checkVip) throws IOException, ApiException;
+
+    /**
      * 验证AccessToken是否有效并返回session.
      *
      * @param token AccessToken

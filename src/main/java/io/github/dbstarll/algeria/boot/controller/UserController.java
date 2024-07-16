@@ -37,6 +37,14 @@ class UserController {
     private final UserService userService;
     private final RbtApi rbtApi;
 
+    @Operation(summary = "检查会员身份", description = "根据手机查询会员身份信息.")
+    @PostMapping("/inspect")
+    GeneralResponse<Boolean> inspect(@Valid @RequestBody final InspectRequest request)
+            throws IOException, ApiException {
+        log.debug("inspect: {}", request);
+        return GeneralResponse.ok(userService.inspect(request.getPhone(), request.isVip()));
+    }
+
     @Operation(summary = "验证token", description = "检查token是否有效，并返回用户信息.")
     @GetMapping("/verify")
     GeneralResponse<Session> verify(@RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token) {
@@ -105,5 +113,20 @@ class UserController {
         protected StringJoiner addToStringEntry(final StringJoiner joiner) {
             return super.addToStringEntry(joiner).add("resourceId=" + getResourceId());
         }
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class InspectRequest extends BaseModel {
+        private static final long serialVersionUID = -4470155308848929650L;
+
+        @NotBlank
+        @Schema(description = "手机号码")
+        private String phone;
+
+        @Schema(description = "是否VIP")
+        private boolean vip;
     }
 }

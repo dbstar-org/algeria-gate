@@ -2,15 +2,19 @@ package io.github.dbstarll.algeria.boot.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dbstarll.algeria.boot.AbstractBaseSpringBootTest;
+import io.github.dbstarll.algeria.boot.controller.UserController.InspectRequest;
 import io.github.dbstarll.algeria.boot.error.ErrorCodes;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.github.dbstarll.algeria.boot.controller.UserController.ResourceRequest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class UserControllerTest extends AbstractBaseSpringBootTest {
     private static final String TEST_MOBILE = "18210008434";
@@ -58,6 +62,14 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             assertTrue(body.at("/data/0/chargeTime").isTextual());
             assertTrue(body.at("/data/0/relativeExpiryDate").isTextual());
         });
+
+        final JsonNode inspectRbt = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, false), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectRbt.get("code").intValue());
+        assertTrue(inspectRbt.get("data").booleanValue());
+
+        final JsonNode inspectVip = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, true), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectVip.get("code").intValue());
+        assertFalse(inspectVip.get("data").booleanValue());
     }
 
     @Test
@@ -83,5 +95,73 @@ class UserControllerTest extends AbstractBaseSpringBootTest {
             assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
             assertEquals("1#13229395", body.at("/data").textValue());
         });
+
+        final JsonNode inspectRbt = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, false), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectRbt.get("code").intValue());
+        assertFalse(inspectRbt.get("data").booleanValue());
+
+        final JsonNode inspectVip = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, true), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectVip.get("code").intValue());
+        assertFalse(inspectVip.get("data").booleanValue());
+    }
+
+    @Test
+    void inspect() {
+        final JsonNode inspectRbt = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, false), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectRbt.get("code").intValue());
+        assertFalse(inspectRbt.get("data").booleanValue());
+
+        final JsonNode inspectVip = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, true), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectVip.get("code").intValue());
+        assertFalse(inspectVip.get("data").booleanValue());
+    }
+
+    @Order(10)
+    @Test
+    void subscribeVip() {
+        withAccessToken(TEST_MOBILE, token -> {
+            final JsonNode body = getForEntity(token, "/api/user/subscribe-vip");
+            assertEquals(2, body.size());
+            assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+            assertEquals(1, body.get("data").size());
+            assertEquals(4, body.at("/data/0").size());
+            assertEquals(TEST_MOBILE, body.at("/data/0/phoneNumber").textValue());
+            assertEquals("000000", body.at("/data/0/resultCode").textValue());
+            assertEquals("2", body.at("/data/0/status").textValue());
+            assertEquals("", body.at("/data/0/serviceID").textValue());
+        });
+
+        final JsonNode inspectRbt = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, false), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectRbt.get("code").intValue());
+        assertTrue(inspectRbt.get("data").booleanValue());
+
+        final JsonNode inspectVip = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, true), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectVip.get("code").intValue());
+        assertTrue(inspectVip.get("data").booleanValue());
+    }
+
+    @Order(20)
+    @Test
+    void unsubscribeVip() {
+        withAccessToken(TEST_MOBILE, token -> {
+            final JsonNode body = getForEntity(token, "/api/user/unsubscribe-vip");
+            System.out.println(body);
+            assertEquals(2, body.size());
+            assertEquals(ErrorCodes.SUCCESS, body.get("code").intValue());
+            assertEquals(1, body.get("data").size());
+            assertEquals(4, body.at("/data/0").size());
+            assertEquals(TEST_MOBILE, body.at("/data/0/phoneNumber").textValue());
+            assertEquals("000000", body.at("/data/0/resultCode").textValue());
+            assertEquals("4", body.at("/data/0/status").textValue());
+            assertEquals("", body.at("/data/0/serviceID").textValue());
+        });
+
+        final JsonNode inspectRbt = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, false), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectRbt.get("code").intValue());
+        assertFalse(inspectRbt.get("data").booleanValue());
+
+        final JsonNode inspectVip = restTemplate.postForObject("/api/user/inspect", new InspectRequest(TEST_MOBILE, true), JsonNode.class);
+        assertEquals(ErrorCodes.SUCCESS, inspectVip.get("code").intValue());
+        assertFalse(inspectVip.get("data").booleanValue());
     }
 }

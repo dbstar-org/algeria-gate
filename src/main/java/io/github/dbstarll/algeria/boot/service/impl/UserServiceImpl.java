@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -84,6 +85,18 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean inspect(final String phone, final boolean checkVip) throws IOException, ApiException {
+        final boolean vip = isVip(rbtApi.user().queryUserProduct(phone).getUserProductInfos());
+        if (checkVip) {
+            return vip;
+        } else if (vip) {
+            return true;
+        } else {
+            return isRbt(rbtApi.user().tone().queryInboxTone(phone).getToneInfos());
+        }
+    }
+
+    @Override
     public Session verify(final UUID token, final boolean renew) {
         final String cacheKey = cacheKey(token);
         return getFromCache(cacheKey).map(session -> {
@@ -108,22 +121,30 @@ class UserServiceImpl implements UserService {
         } else if (vip) {
             return false;
         } else {
-            return isSubscribe(session);
+            return isRbt(session);
         }
     }
 
-    private boolean isSubscribe(final Session session) {
-        return Optional.ofNullable(session.getTones())
-                .map(ps -> ps.stream().anyMatch(this::isSubscribe))
+    private boolean isRbt(final Session session) {
+        return isRbt(session.getTones());
+    }
+
+    private boolean isRbt(final List<ToneInfo> tones) {
+        return Optional.ofNullable(tones)
+                .map(ps -> ps.stream().anyMatch(this::isRbt))
                 .orElse(false);
     }
 
-    private boolean isSubscribe(final ToneInfo tone) {
+    private boolean isRbt(final ToneInfo tone) {
         return toneService.exists(tone.getToneID()) && beforeTime(tone.getAvailableDateTime());
     }
 
     private boolean isVip(final Session session) {
-        return Optional.ofNullable(session.getProducts())
+        return isVip(session.getProducts());
+    }
+
+    private boolean isVip(final List<UserProductInfo> products) {
+        return Optional.ofNullable(products)
                 .map(ps -> ps.stream().anyMatch(this::isVip))
                 .orElse(false);
     }
