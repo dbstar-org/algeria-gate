@@ -1,14 +1,20 @@
 package io.github.dbstarll.algeria.boot.controller;
 
 import io.github.dbstarll.algeria.boot.api.RbtApi;
+import io.github.dbstarll.algeria.boot.jpa.entity.Game;
+import io.github.dbstarll.algeria.boot.jpa.entity.UserGame;
+import io.github.dbstarll.algeria.boot.jpa.repository.UserGameRepository;
 import io.github.dbstarll.algeria.boot.mdc.AccessTokenHolder;
 import io.github.dbstarll.algeria.boot.model.BaseModel;
+import io.github.dbstarll.algeria.boot.model.UserGameDetail;
 import io.github.dbstarll.algeria.boot.model.api.response.BaseResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.ContentDownloadInfo;
 import io.github.dbstarll.algeria.boot.model.api.response.user.EasyDownloadResponse;
 import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProduct;
 import io.github.dbstarll.algeria.boot.model.api.response.user.SubscribeProductResponse;
+import io.github.dbstarll.algeria.boot.model.response.BasePageableRequest;
 import io.github.dbstarll.algeria.boot.model.response.GeneralResponse;
+import io.github.dbstarll.algeria.boot.model.response.PageableResponse;
 import io.github.dbstarll.algeria.boot.model.service.Session;
 import io.github.dbstarll.algeria.boot.service.UserService;
 import io.github.dbstarll.algeria.boot.uuid.Uuid;
@@ -36,6 +42,7 @@ import java.util.UUID;
 class UserController {
     private final UserService userService;
     private final RbtApi rbtApi;
+    private final UserGameRepository userGameRepository;
 
     @Operation(summary = "检查会员身份", description = "根据手机查询会员身份信息.")
     @PostMapping("/inspect")
@@ -98,6 +105,18 @@ class UserController {
         return GeneralResponse.ok(response.getReturnObjects());
     }
 
+    @Operation(summary = "我的游戏", description = "获取用户下载过的游戏列表.")
+    @PostMapping("/games")
+    GeneralResponse<PageableResponse<UserGameData>> games(
+            @RequestHeader(AccessTokenHolder.HEADER_ACCESS_TOKEN) final UUID token,
+            @Valid @RequestBody final MyGameRequest request) {
+        log.debug("games: {}", request);
+        final Session session = userService.verify(token, true);
+        return GeneralResponse.ok(PageableResponse.of(userGameRepository.
+                findAllByPhoneAndVip(session.getPhone(), request.isVip(), request.toPageable())
+                .map(UserGameData::new)));
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -128,5 +147,74 @@ class UserController {
 
         @Schema(description = "是否VIP")
         private boolean vip;
+    }
+
+    @Getter
+    @Setter
+    static final class MyGameRequest extends BasePageableRequest<MyGameRequest> {
+        private static final long serialVersionUID = 1179862728653848697L;
+
+        @Schema(description = "是否VIP游戏")
+        private boolean vip;
+    }
+
+    @RequiredArgsConstructor
+    static final class UserGameData extends BaseModel {
+        private static final long serialVersionUID = -6687268530300520206L;
+
+        private final UserGameDetail detail;
+
+        private UserGame getUserGame() {
+            return detail.getUserGame();
+        }
+
+        private Game getGame() {
+            return detail.getGame();
+        }
+
+        @Schema(description = "下载次数")
+        public int getDownloadCount() {
+            return getUserGame().getDownloadCount();
+        }
+
+        @Schema(description = "首次下载时间")
+        public long getFirstDownloadTime() {
+            return getUserGame().getCreateTime();
+        }
+
+        @Schema(description = "最近下载时间")
+        public Long getLastDownloadTime() {
+            return getUserGame().getUpdateTime();
+        }
+
+        @Schema(description = "游戏名")
+        public String getName() {
+            return getGame().getName();
+        }
+
+        @Schema(description = "游戏类型")
+        public String getType() {
+            return getGame().getType();
+        }
+
+        @Schema(description = "小图标：148 × 148")
+        public String getIconSmall() {
+            return getGame().getIconSmall();
+        }
+
+        @Schema(description = "大图标：190 × 190")
+        public String getIconBig() {
+            return getGame().getIconBig();
+        }
+
+        @Schema(description = "是否VIP游戏")
+        public boolean isVip() {
+            return getGame().isVip();
+        }
+
+        @Schema(description = "游戏ID")
+        public UUID getId() {
+            return getGame().getId();
+        }
     }
 }
